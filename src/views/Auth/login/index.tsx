@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../context/auth';
+import { redirect, useNavigate } from 'react-router-dom';
 
 interface LoginFormValues {
   email: string;
@@ -12,13 +13,15 @@ const LoginPage: React.FC = () => {
   const [email, setemail] = useState<string>('25377391');
   const [password, setPassword] = useState<string>('123456789');
   const auth = useAuth();
-
+  const navigate = useNavigate()
   const handleSubmit = async () => {
     setLoading(true);
     try {
       console.log("clicked")
-      auth.signIn(email, password);
+      await auth.signIn(email, password);
+      navigate('/')
     } catch (err: any) {
+      redirect("/login");
       setSignInError(err);
       console.log(err)
     }

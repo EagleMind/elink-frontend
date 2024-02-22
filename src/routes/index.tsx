@@ -5,7 +5,7 @@ import ViewInvoices from "../views/Invoices/viewInvoices"
 
 export const AUTH_ROUTES = [
   {
-    path: '/',
+    path: '/login',
     component: <LoginPage />
   },
   {
@@ -22,7 +22,7 @@ export const MAIN_ROUTES = [
     title: 'Overview'
   },
   {
-    path: '/invoices',
+    path: '/viewInvoices',
     component: <ViewInvoices />,
     title: 'Invoices'
   }

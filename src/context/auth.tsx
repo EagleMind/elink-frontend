@@ -15,7 +15,7 @@ type AuthContextData = {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
-    const [authData, setAuthData] = useState<AuthData | null>(null);
+    const [authData, setAuthData] = useState<AuthData>();
     //the AuthContext start with loading equals true
     //and stay like this, until the data be load from Async Storage
     const [loading, setLoading] = useState(true);
@@ -52,7 +52,9 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
             if (authDataSerialized) {
                 const jwtDecoded: JwtDecoded = jwtDecode(authDataSerialized);
                 const tokenValidationState: boolean = isTokenExpired(jwtDecoded.exp);
-                setAuthData(tokenValidationState);
+                if (!tokenValidationState) {
+                    localStorage.clear()
+                }
             }
         } catch (error) {
             // Handle error
@@ -63,11 +65,10 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
     const signIn = async (email: string, password: string) => {
         const response = await authService.signIn(email, password);
+        console.log(response)
         if (response) {
             localStorage.setItem('token', response.token);
-            setAuthData(response);
         }
-        console.log(response);
     };
     const signUp = async (email: string, password: string) => {
         //call the service passing credential (email and password).
@@ -78,13 +79,8 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     };
 
     const signOut = async () => {
-        //Remove data from context, so the App can be notified
-        //and send the user to the AuthStack
-        setAuthData(null);
 
-        //Remove the data from Async Storage
-        //to NOT be recoverede in next session.
-        await localStorage.removeItem('token');
+        localStorage.clear();
     };
 
     return (

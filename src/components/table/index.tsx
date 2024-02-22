@@ -15,7 +15,7 @@ const UserListTable: React.FC<TableProps> = ({ data, columns }) => {
       {!loading && data.length === 0 ? (
         <div className='grid justify-items-center items-center md:h-2/3 '>
           <div className='flex flex-col '>
-            <p className='text-[18px] font-bold'>Pas encore de talent</p>
+            <p className='text-[18px] font-bold'>Pas encore de données</p>
           </div>
         </div>
       ) : (

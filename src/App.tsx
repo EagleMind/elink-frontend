@@ -13,35 +13,34 @@ import ViewInvoices from './views/Invoices/viewInvoices'
 import { AUTH_ROUTES, MAIN_ROUTES } from './routes'
 
 function App() {
-  const isLoggedIn = localStorage.getItem('token')
   return (
+
     <AuthProvider>
       <Routes>
-        <Fragment>
-          {isLoggedIn ? (
-            <Route element={<Layout />}>
-              {MAIN_ROUTES.map((route, index) =>
+        <Route
+          element={<PrivateRoute />}
+        >
+          {MAIN_ROUTES.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path}
+              element={route.component}
+            />
+          ))}
+        </Route>
+        <Route
 
-                <Route
-                  key={index}
-                  path={route.path}
-                  element={route.component}
-                />
-              )}
-            </Route>
-          ) : (
-            AUTH_ROUTES.map((route, index) => (
-              <Route
-                key={index}
-                path={route.path}
-                element={route.component}
-              />
-            ))
-          )}
-          <Route path="*" element={null} />
-        </Fragment>
+        >
+          {AUTH_ROUTES.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path}
+              element={route.component}
+            />
+          ))}
+        </Route>
+        <Route path="*" element={null} />
       </Routes>
-
     </AuthProvider>
   )
 }
