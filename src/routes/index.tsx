@@ -2,6 +2,7 @@ import RegistrationPage from "../views/Auth/register"
 import LoginPage from "../views/Auth/login"
 import Home from "../views/home"
 import ViewInvoices from "../views/Invoices/viewInvoices"
+import InvoicesContainer from "../layout/containers/invoices"
 
 export const AUTH_ROUTES = [
   {
@@ -23,7 +24,7 @@ export const MAIN_ROUTES = [
   },
   {
     path: '/viewInvoices',
-    component: <ViewInvoices />,
+    component: <InvoicesContainer />,
     title: 'Invoices'
   }
 ]

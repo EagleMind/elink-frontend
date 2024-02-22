@@ -20,17 +20,17 @@ function App() {
         <Route
           element={<PrivateRoute />}
         >
-          {MAIN_ROUTES.map((route, index) => (
-            <Route
-              key={index}
-              path={route.path}
-              element={route.component}
-            />
-          ))}
-        </Route>
-        <Route
+          <Route element={<Layout />}>
+            {MAIN_ROUTES.map((route, index) => (
+              <Route
+                key={index}
+                path={route.path}
+                element={route.component}
+              />
+            ))}
+          </Route></Route>
 
-        >
+        <Route element={<Layout />}>
           {AUTH_ROUTES.map((route, index) => (
             <Route
               key={index}

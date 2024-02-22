@@ -24,67 +24,60 @@ interface Invoice {
     currency: string;
 }
 
+import { axiosInstance } from './axios';
 
-// Function to create an invoice
-async function createInvoice(invoiceData: Invoice, token: string): Promise<AxiosResponse<any>> {
-    try {
-        const response = await axios.post(`${VITE_REACT_APP_BASE_URL}/invoices`, invoiceData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response;
-    } catch (error) {
-        throw error;
+// Define the base URL for invoices
+const INVOICES_BASE_URL = '/invoices';
+
+// Service to interact with invoice-related endpoints
+export const InvoiceService = {
+    // Create a new invoice
+    create: async (invoiceData: any) => {
+        try {
+            const response = await axiosInstance.post(INVOICES_BASE_URL, invoiceData);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Get all invoices
+    getAll: async () => {
+        try {
+            const response = await axiosInstance.get(INVOICES_BASE_URL);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Get an invoice by ID
+    getById: async (id: string) => {
+        try {
+            const response = await axiosInstance.get(`${INVOICES_BASE_URL}/${id}`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Update an invoice by ID
+    updateById: async (id: string, updatedData: any) => {
+        try {
+            const response = await axiosInstance.put(`${INVOICES_BASE_URL}/${id}`, updatedData);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Delete an invoice by ID
+    deleteById: async (id: string) => {
+        try {
+            const response = await axiosInstance.delete(`${INVOICES_BASE_URL}/${id}`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
     }
-}
-
-// Function to get all invoices
-async function getAllInvoices(): Promise<AxiosResponse<any>> {
-    try {
-        const response = await axios.get(`${VITE_REACT_APP_BASE_URL}/invoices`);
-        return response;
-    } catch (error) {
-        throw error;
-    }
-}
-
-// Function to get an invoice by ID
-async function getInvoiceById(id: string): Promise<AxiosResponse<any>> {
-    try {
-        const response = await axios.get(`${VITE_REACT_APP_BASE_URL}/invoices/${id}`);
-        return response;
-    } catch (error) {
-        throw error;
-    }
-}
-
-// Function to update an invoice by ID
-async function updateInvoiceById(id: string, updatedData: any, token: string): Promise<AxiosResponse<any>> {
-    try {
-        const response = await axios.put(`${VITE_REACT_APP_BASE_URL}/invoices/${id}`, updatedData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response;
-    } catch (error) {
-        throw error;
-    }
-}
-
-// Function to delete an invoice by ID
-async function deleteInvoiceById(id: string, token: string): Promise<AxiosResponse<any>> {
-    try {
-        const response = await axios.delete(`${VITE_REACT_APP_BASE_URL}/invoices/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response;
-    } catch (error) {
-        throw error;
-    }
-}
-
-export { createInvoice, getAllInvoices, getInvoiceById, updateInvoiceById, deleteInvoiceById }
+};
