@@ -2,23 +2,25 @@ import React, { useState } from 'react';
 import { useAuth } from '../../../context/auth';
 
 interface LoginFormValues {
-  phoneNumber: string;
+  email: string;
   password: string;
 }
 
 const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [signInError, setSignInError] = useState<string>('');
-  const [phoneNumber, setPhoneNumber] = useState<string>('25377391');
+  const [email, setemail] = useState<string>('25377391');
   const [password, setPassword] = useState<string>('123456789');
   const auth = useAuth();
 
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await auth.signIn(phoneNumber, password);
+      console.log("clicked")
+      auth.signIn(email, password);
     } catch (err: any) {
       setSignInError(err);
+      console.log(err)
     }
     setLoading(false);
   };
@@ -26,8 +28,8 @@ const LoginPage: React.FC = () => {
   const validateForm = () => {
     const errors: Partial<LoginFormValues> = {};
 
-    if (!phoneNumber) {
-      errors.phoneNumber = 'Phone number is required';
+    if (!email) {
+      errors.email = 'email number is required';
     }
 
     if (!password) {
@@ -42,13 +44,13 @@ const LoginPage: React.FC = () => {
       <div className="max-w-md w-full">
         <input
           type="text"
-          placeholder="Phone Number"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
+          placeholder="email Number"
+          value={email}
+          onChange={(e) => setemail(e.target.value)}
           className="border border-gray-300 rounded-md p-2 w-full mb-2"
         />
         <p className="text-red-500">
-          {/* Display errors.phoneNumber */}
+          {/* Display errors.email */}
         </p>
 
         <input
@@ -61,7 +63,6 @@ const LoginPage: React.FC = () => {
         <p className="text-red-500">
           {/* Display errors.password */}
         </p>
-        {console.log(signInError)}
         <p className="text-red-500">{signInError}</p>
 
         {loading ? (

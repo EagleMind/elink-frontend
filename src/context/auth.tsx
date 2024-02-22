@@ -3,8 +3,8 @@ import { AuthData, authService } from '../services/authentication';
 import { jwtDecode } from 'jwt-decode';
 import { PropsWithChildren } from 'react';
 type AuthContextData = {
-    signUp(phone: string, password: string): Promise<void>;
-    signIn(phone: string, password: string): Promise<void>;
+    signUp(email: string, password: string): Promise<void>;
+    signIn(email: string, password: string): Promise<void>;
     authData?: AuthData;
     loading: boolean;
     signOut(): void;
@@ -61,18 +61,18 @@ const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
             setLoading(false);
         }
     }
-    const signIn = async (phone: string, password: string) => {
-        const response = await authService.signIn(phone, password);
+    const signIn = async (email: string, password: string) => {
+        const response = await authService.signIn(email, password);
         if (response) {
             localStorage.setItem('token', response.token);
             setAuthData(response);
         }
         console.log(response);
     };
-    const signUp = async (phone: string, password: string) => {
+    const signUp = async (email: string, password: string) => {
         //call the service passing credential (email and password).
         //In a real App this data will be provided by the user from some InputText components.
-        await authService.Register(phone, password);
+        await authService.Register(email, password);
         //Set the data in the context, so the App can be notified
         //and send the user to the AuthStack
     };

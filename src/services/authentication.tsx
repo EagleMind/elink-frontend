@@ -1,12 +1,14 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+const VITE_REACT_APP_BASE_URL = import.meta.env.VITE_REACT_APP_BASE_URL; // Update with your server details
+
 export type AuthData = {
-    token(token: string): unknown;
+    token: string
     data: any;
     password: number;
-    phoneNumber: number;
+    email: number;
 };
 
-const signIn = (phoneNumber: string, password: string): Promise<AuthData> => {
+const signIn = (email: string, password: string): Promise<AuthData> => {
     // this is a mock of an API call, in a real app
     // will be need connect with some real API,
     // send email and password, and if credential is corret
@@ -14,11 +16,11 @@ const signIn = (phoneNumber: string, password: string): Promise<AuthData> => {
     const config: AxiosRequestConfig = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://192.168.1.19:3001/api/auth',
+        url: `${VITE_REACT_APP_BASE_URL}/auth/login`,
         headers: {
             'Content-Type': 'application/json',
         },
-        data: { phoneNumber, password },
+        data: { email, password },
     };
     return new Promise((resolve, reject) => {
         axios
@@ -31,19 +33,19 @@ const signIn = (phoneNumber: string, password: string): Promise<AuthData> => {
             });
     });
 };
-const Register = (phoneNumber: string, password: string): Promise<AuthData> => {
+const Register = (email: string, password: string): Promise<AuthData> => {
     // this is a mock of an API call, in a real app
     // will be need connect with some real API,
     // send email and password, and if credential is corret
     //the API will resolve with some token and another datas as the below
 
     return new Promise((resolve, reject) => {
-        let data = JSON.stringify({ phoneNumber, password });
+        let data = JSON.stringify({ email, password });
 
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'http://192.168.1.19:3001/api/register',
+            url: `${VITE_REACT_APP_BASE_URL}/auth/register`,
             headers: {
                 'Content-Type': 'application/json',
             },

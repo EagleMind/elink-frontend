@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -9,21 +9,37 @@ import PrivateRoute from './routes/privateRouter'
 import Home from './views/home'
 import Layout from './layout'
 import InvoiceForm from './views/Invoices/createInvoice'
+import ViewInvoices from './views/Invoices/viewInvoices'
+import { AUTH_ROUTES, MAIN_ROUTES } from './routes'
 
 function App() {
-
+  const isLoggedIn = localStorage.getItem('token')
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route element={<Layout />}>
+        <Fragment>
+          {isLoggedIn ? (
+            <Route element={<Layout />}>
+              {MAIN_ROUTES.map((route, index) =>
 
-          <Route element={<PrivateRoute />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/makeInvoice" element={<InvoiceForm />} />
-            {/* Add more private routes here */}
-          </Route>
-        </Route>
+                <Route
+                  key={index}
+                  path={route.path}
+                  element={route.component}
+                />
+              )}
+            </Route>
+          ) : (
+            AUTH_ROUTES.map((route, index) => (
+              <Route
+                key={index}
+                path={route.path}
+                element={route.component}
+              />
+            ))
+          )}
+          <Route path="*" element={null} />
+        </Fragment>
       </Routes>
 
     </AuthProvider>

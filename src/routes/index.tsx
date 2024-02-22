@@ -1,6 +1,7 @@
 import RegistrationPage from "../views/Auth/register"
 import LoginPage from "../views/Auth/login"
 import Home from "../views/home"
+import ViewInvoices from "../views/Invoices/viewInvoices"
 
 export const AUTH_ROUTES = [
   {
@@ -16,14 +17,13 @@ export const AUTH_ROUTES = [
 
 export const MAIN_ROUTES = [
   {
-    path: '/home',
+    path: '/',
     component: <Home />,
     title: 'Overview'
   },
-  //   {
-  //     path: '/subscriptions',
-  //     component: <SubscriptionsList />,
-  //     roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
-  //     title: 'Subscriptions'
-  //   }
+  {
+    path: '/invoices',
+    component: <ViewInvoices />,
+    title: 'Invoices'
+  }
 ]
