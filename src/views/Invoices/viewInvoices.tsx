@@ -9,14 +9,14 @@ export default function ViewInvoices({ invoices }: Props) {
     return (
         <Fragment >
             <UserListTable data={invoices} columns={[
-                "number",
-                "expired",
-                "status",
-                "discount",
-                "total",
-                "payment_method",
-                "currency",
-                "created_at",
+                "Bill Number",
+                "Expired",
+                "Status",
+                "Discount",
+                "Total",
+                "Payment Method",
+                "Currency",
+                "Creation Date",
             ]}></UserListTable>
         </Fragment>
     );

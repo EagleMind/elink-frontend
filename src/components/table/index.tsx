@@ -39,7 +39,7 @@ const UserListTable: React.FC<TableProps> = ({ data, columns }) => {
             <tr>
               {columns.map((column, index) => (
                 <th
-                  className="py-3 text-left text-xs font-mulish text-grey1 capitalize md:text-[14px]"
+                  className="p-5 text-left text-xs font-mulish text-grey1 capitalize md:text-[14px] bg-gray-100"
                   key={index}
                 >
                   {column}
@@ -66,9 +66,18 @@ const UserListTable: React.FC<TableProps> = ({ data, columns }) => {
             {!loading &&
               data.map((row, rowIndex) => (
                 <tr key={rowIndex}>
-                  {columns.map((column, colIndex) => (
+                  {[
+                    "number",
+                    "expired",
+                    "status",
+                    "discount",
+                    "total",
+                    "payment_method",
+                    "currency",
+                    "created_at",
+                  ].map((column, colIndex) => (
                     <td
-                      className="text-left py-5 border-b border-grey3 bg-white text-sm w-fit "
+                      className="text-left p-5 border-b border-grey3 bg-white text-sm w-fit "
                       key={colIndex}
                     >
                       {console.log(column)}
