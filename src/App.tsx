@@ -30,15 +30,13 @@ function App() {
             ))}
           </Route></Route>
 
-        <Route element={<Layout />}>
-          {AUTH_ROUTES.map((route, index) => (
-            <Route
-              key={index}
-              path={route.path}
-              element={route.component}
-            />
-          ))}
-        </Route>
+        {AUTH_ROUTES.map((route, index) => (
+          <Route
+            key={index}
+            path={route.path}
+            element={route.component}
+          />
+        ))}
         <Route path="*" element={null} />
       </Routes>
     </AuthProvider>
