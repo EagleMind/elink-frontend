@@ -45,6 +45,7 @@ export const InvoiceService = {
     getAll: async () => {
         try {
             const response = await axiosInstance.get(INVOICES_BASE_URL);
+
             return response.data;
         } catch (error) {
             throw error;

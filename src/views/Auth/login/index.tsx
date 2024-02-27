@@ -10,8 +10,8 @@ interface LoginFormValues {
 const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [signInError, setSignInError] = useState<string>('');
-  const [email, setemail] = useState<string>('25377391');
-  const [password, setPassword] = useState<string>('123456789');
+  const [email, setemail] = useState<string>('hassen@test.com');
+  const [password, setPassword] = useState<string>('123456');
   const auth = useAuth();
   const navigate = useNavigate()
   const handleSubmit = async () => {

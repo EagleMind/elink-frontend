@@ -17,6 +17,7 @@ export default function ViewInvoices({ invoices }: Props) {
                 "Payment Method",
                 "Currency",
                 "Creation Date",
+                "actions"
             ]}></UserListTable>
         </Fragment>
     );

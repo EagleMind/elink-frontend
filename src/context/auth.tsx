@@ -2,6 +2,9 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { AuthData, authService } from '../services/authentication';
 import { jwtDecode } from 'jwt-decode';
 import { PropsWithChildren } from 'react';
+import Cookies from 'js-cookie';
+
+// Define the type for the authentication context data
 type AuthContextData = {
     signUp(email: string, password: string): Promise<void>;
     signIn(email: string, password: string): Promise<void>;
@@ -10,90 +13,72 @@ type AuthContextData = {
     signOut(): void;
 };
 
-//Create the Auth Context with the data type specified
-//and a empty object
+// Create the Auth Context with the specified data type and an empty object
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
-    const [authData, setAuthData] = useState<AuthData>();
-    //the AuthContext start with loading equals true
-    //and stay like this, until the data be load from Async Storage
+const AuthProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => { // Added {} to PropsWithChildren
+    const [authData, setAuthData] = useState<AuthData | undefined>();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        //Every time the App is opened, this provider is rendered
-        //and call de loadStorage function.
         loadStorageData();
     }, []);
-    function isTokenExpired(expirationTimestamp: number) {
-        // Convert the expiration timestamp to milliseconds
-        const expirationDateTime = expirationTimestamp * 1000;
 
-        // Get the current timestamp in milliseconds
+    function isTokenExpired(expirationTimestamp: number) {
+        const expirationDateTime = expirationTimestamp * 1000;
         const currentTimestamp = Date.now();
 
-        // Compare the expiration timestamp with the current timestamp
-        console.log(expirationDateTime, currentTimestamp);
-        if (expirationDateTime < currentTimestamp) {
-            return false; // Token is expired
-        } else {
-            return true; // Token is not expired
-        }
+        return expirationDateTime < currentTimestamp;
     }
+
     async function loadStorageData(): Promise<void> {
-        interface JwtDecoded {
-            exp: number;
-        }
-
         try {
-            // Try to get the data from Async Storage
-            const authDataSerialized: string | null = localStorage.getItem('token');
+            const token = Cookies.get('TOKEN_KEY');
 
-            if (authDataSerialized) {
-                const jwtDecoded: JwtDecoded = jwtDecode(authDataSerialized);
-                const tokenValidationState: boolean = isTokenExpired(jwtDecoded.exp);
+            if (token) {
+                const jwtDecoded = jwtDecode(token) as { exp: number };
+                const tokenValidationState = isTokenExpired(jwtDecoded.exp);
+
                 if (!tokenValidationState) {
-                    localStorage.clear()
+                    Cookies.remove('TOKEN_KEY');
+                } else {
+                    // Fetch user data or perform any other necessary actions
+                    // Here, you might want to setAuthData with user information
                 }
             }
         } catch (error) {
-            // Handle error
+            console.error('Error loading storage data:', error);
         } finally {
-            // Loading finished
             setLoading(false);
         }
     }
+
     const signIn = async (email: string, password: string) => {
         const response = await authService.signIn(email, password);
-        console.log(response)
         if (response) {
-            localStorage.setItem('token', response.token);
+            // Set expiration time to 24 hours from now
+            const expirationDate = new Date();
+            expirationDate.setTime(expirationDate.getTime() + (24 * 60 * 60 * 1000)); // 24 hours in milliseconds
+
+            sessionStorage.setItem('TOKEN_KEY', response.token);
         }
     };
+
     const signUp = async (email: string, password: string) => {
-        //call the service passing credential (email and password).
-        //In a real App this data will be provided by the user from some InputText components.
         await authService.Register(email, password);
-        //Set the data in the context, so the App can be notified
-        //and send the user to the AuthStack
     };
 
-    const signOut = async () => {
-
-        localStorage.clear();
+    const signOut = () => {
+        Cookies.remove('TOKEN_KEY');
     };
 
     return (
-        //This component will be used to encapsulate the whole App,
-        //so all components will have access to the Context
         <AuthContext.Provider value={{ authData, loading, signUp, signIn, signOut }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-//A simple hooks to facilitate the access to the AuthContext
-// and permit components to subscribe to AuthContext updates
 function useAuth(): AuthContextData {
     const context = useContext(AuthContext);
 

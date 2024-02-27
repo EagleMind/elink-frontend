@@ -22,22 +22,10 @@ export const UserProvider = ({ children }) => {
             console.log(error);
         }
     }
-    // Function to fetch user information
-    const fetchUserInfo = async (token: any) => {
-        if (token) {
-            try {
-                const response = await userService.UserInfos(token);
-                console.log;
-                setUser(response); // Set the fetched user info in the states
-            } catch (error) {
-                return error;
-            }
-        }
-    };
+
     // Fetch user information when the component mounts
     useEffect(() => {
         loadStorageData();
-        fetchUserInfo(token); // Replace with your logic to fetch the user info
     }, [token]);
 
     // Provide the user information to the consuming components

@@ -8,6 +8,8 @@ export type AuthData = {
     email: number;
 };
 
+
+
 const signIn = (email: string, password: string): Promise<AuthData> => {
     // this is a mock of an API call, in a real app
     // will be need connect with some real API,
@@ -17,9 +19,6 @@ const signIn = (email: string, password: string): Promise<AuthData> => {
         method: 'post',
         maxBodyLength: Infinity,
         url: `${VITE_REACT_APP_BASE_URL}/auth/login`,
-        headers: {
-            'Content-Type': 'application/json',
-        },
         data: { email, password },
     };
     return new Promise((resolve, reject) => {

@@ -1,24 +1,31 @@
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
-
+import MyModal from '../common/Modal';
 interface TableProps {
   data: { [key: string]: any }[];
   columns: string[];
 }
 
+
 const UserListTable: React.FC<TableProps> = ({ data, columns }) => {
   const [loading, setIsLoading] = useState(false);
-  const option = (arg: any) => {
-    if (Array.isArray(arg)) {
+
+
+  const option = (value: any, column: any, id: string) => {
+    console.log(id)
+    if (Array.isArray(value)) {
       return null
     }
-    if (arg == true) {
+    if (value == true) {
       return <span>Yes</span>
-    } else if (arg == false) {
+    } else if (value == false) {
       return <span>No</span>
     }
-    return arg
+    if (column === "actions") {
+      return <div className='flex space-x-2'>
+        <MyModal invoiceId={id}></MyModal>
+      </div>
+    }
+    return value
 
   }
   useEffect(() => {
@@ -27,6 +34,8 @@ const UserListTable: React.FC<TableProps> = ({ data, columns }) => {
 
   return (
     <div>
+
+
       {!loading && data.length === 0 ? (
         <div className="grid justify-items-center items-center w-full overflow-hidden">
           <div className="flex flex-col">
@@ -75,13 +84,13 @@ const UserListTable: React.FC<TableProps> = ({ data, columns }) => {
                     "payment_method",
                     "currency",
                     "created_at",
+                    "actions"
                   ].map((column, colIndex) => (
                     <td
                       className="text-left p-5 border-b border-grey3 bg-white text-sm w-fit "
                       key={colIndex}
                     >
-                      {console.log(column)}
-                      {option(row[column])}
+                      {option(row[column], column, row._id)}
 
                     </td>
                   ))}

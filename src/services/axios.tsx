@@ -8,9 +8,9 @@ function createAxiosInstance(): AxiosInstance {
     const config: AxiosRequestConfig = {
         baseURL: VITE_REACT_APP_BASE_URL,
         timeout: 5000, // Adjust the timeout as per your needs
+        withCredentials: true,
         headers: {
             'Content-Type': 'application/json',
-            "x-auth-token": `${localStorage.getItem("token")}`,
         },
     };
 
