@@ -59,7 +59,6 @@ const AuthProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => { // Add
             // Set expiration time to 24 hours from now
             const expirationDate = new Date();
             expirationDate.setTime(expirationDate.getTime() + (24 * 60 * 60 * 1000)); // 24 hours in milliseconds
-
             sessionStorage.setItem('TOKEN_KEY', response.token);
         }
     };
