@@ -53,9 +53,9 @@ export const InvoiceService = {
     },
 
     // Get an invoice by ID
-    getById: async (id: string) => {
+    getById: async (id: string, query: string) => {
         try {
-            const response = await axiosInstance.get(`${INVOICES_BASE_URL}/${id}`);
+            const response = await axiosInstance.get(`${INVOICES_BASE_URL}/${id}?link_type=${query}`);
             return response.data;
         } catch (error) {
             throw error;

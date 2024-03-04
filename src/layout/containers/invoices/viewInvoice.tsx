@@ -2,9 +2,8 @@ import React, { Fragment, useEffect, useState } from 'react'
 import ViewInvoices from '../../../views/Invoices/viewInvoices'
 import { InvoiceService } from '../../../services/invoices';
 
-type Props = {}
 
-export default function InvoicesContainer({ }: Props) {
+export default function ViewInvoicesContainer({ }) {
     const [invoices, setInvoices] = useState<[]>([]);
 
     const getInvoices = async () => {
@@ -18,6 +17,7 @@ export default function InvoicesContainer({ }: Props) {
 
     useEffect(() => {
         getInvoices();
+
     }, []); // Empty dependency array to fetch data only once when component mounts
 
     return (

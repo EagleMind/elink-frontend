@@ -28,9 +28,9 @@ const SideMenu: React.FC<SideMenuProps> = ({ routes }) => {
                             <Link
                                 key={index}
                                 to={route.path}
-                                className={`flex items-center rounded-lg px-3 py-2 text-[18px] ${location.pathname === route.path
-                                    ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50 text-[18px]'
-                                    : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 text-[18px]'
+                                className={`flex items-center rounded-lg px-3 py-2 text-[14px] ${location.pathname === route.path
+                                    ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50 text-[14px]'
+                                    : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 text-[14px]'
                                     }`}
                             >
                                 {/* You can put your SVG icon and text here */}

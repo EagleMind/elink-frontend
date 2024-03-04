@@ -1,8 +1,9 @@
 import RegistrationPage from "../views/Auth/register"
 import LoginPage from "../views/Auth/login"
 import Home from "../views/home"
-import ViewInvoices from "../views/Invoices/viewInvoices"
-import InvoicesContainer from "../layout/containers/invoices"
+import PaymentLinksContainer from "../layout/containers/paymentLinks"
+import CreateInvoiceContainer from "../layout/containers/invoices/createInvoice"
+import ViewInvoicesContainer from "../layout/containers/invoices/viewInvoice"
 
 export const AUTH_ROUTES = [
   {
@@ -20,11 +21,21 @@ export const MAIN_ROUTES = [
   {
     path: '/',
     component: <Home />,
-    title: 'Overview'
+    title: 'Statistiques générale'
   },
   {
     path: '/viewInvoices',
-    component: <InvoicesContainer />,
-    title: 'Invoices'
-  }
+    component: <ViewInvoicesContainer />,
+    title: 'Factures'
+  },
+  {
+    path: '/createinvoice',
+    component: <CreateInvoiceContainer />,
+    title: 'Créer une facture'
+  },
+  {
+    path: '/paymentLinks',
+    component: <PaymentLinksContainer />,
+    title: 'Liens de paiments'
+  },
 ]

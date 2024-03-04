@@ -6,11 +6,40 @@ import { InvoiceService } from '../../services/invoices'
 type Props = {
     invoiceId: string
 }
+type InvoiceDetails = {
+    invoiceNumber: string;
+    date: string;
+    // Add more fields as needed
+}
+
+type ActionType = 'view' | 'delete' | 'edit';
 
 export default function Modal({ invoiceId }: Props) {
     const [loading, setIsLoading] = useState(false);
     let [isOpen, setIsOpen] = useState(false)
     const [actionType, setAction] = useState("");
+    const [isEditing, setIsEditing] = useState(false); // State to track editing mode
+
+
+    // Inputs states //
+
+
+    const [invoiceDetails, setInvoiceDetails] = useState({
+        invoiceNumber: "INV-001",
+        date: "February 23, 2024",
+        vendorName: "test User",
+        address: "Steer 90",
+        email: "hassen@text.com"
+    });
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        setInvoiceDetails(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    // Inputs states //
     function closeModal() {
         setIsOpen(false)
     }
@@ -28,7 +57,8 @@ export default function Modal({ invoiceId }: Props) {
 
         }
     }
-    function openModal(actionType: string) {
+
+    const openModal = (actionType: ActionType) => {
         setIsOpen(true)
         if (actionType === "delete") {
             setAction("delete")
@@ -40,7 +70,160 @@ export default function Modal({ invoiceId }: Props) {
     }
 
     let modalContent;
+
     if (actionType === 'view') {
+        const editButton = (
+            <button
+                className="absolute top-2 right-2 bg-gray-200 rounded-full p-2"
+                onClick={() => setIsEditing(prevState => !prevState)} // Toggle isEditing state
+            >
+                {isEditing ? "Cancel" : "Edit"}
+            </button>
+        );
+
+        let contentToRender;
+
+        if (isEditing) {
+            // Render inputs for editing mode
+            contentToRender = (
+
+                <div className="bg-white p-8 rounded-lg shadow-md">
+                    <div className="flex justify-between mb-8">
+                        <div className="flex flex-col">
+                            <h1 className="text-2xl font-bold">Invoice</h1>
+                            <input
+                                type="text"
+                                placeholder="1234 Main Street, City, Country"
+                                value={invoiceDetails.address}
+                                onChange={handleInputChange}
+                            />
+                            <input
+                                type="text"
+                                placeholder="1234 Main Street, City, Country"
+                                value={invoiceDetails.email}
+                                onChange={handleInputChange}
+                            />
+
+                        </div>
+                        <div>
+                            <img src="/logo.png" alt="Company Logo" className="w-24 h-24" />
+                        </div>
+                    </div>
+
+                    {/* Invoice details */}
+                    <div className="flex justify-between">
+                        <div className=" flex flex-col mb-8">
+                            <h2 className="text-lg font-semibold mb-4">Bill from</h2>
+                            <input
+                                type="text"
+                                placeholder="Vendor name"
+                                value={invoiceDetails.invoiceNumber}
+                                onChange={handleInputChange}
+                            />
+                            <input
+                                type="text"
+                                placeholder="Invoice Number"
+                                value={invoiceDetails.vendorName}
+                                onChange={handleInputChange}
+                            />
+
+                            <input
+                                type="date"
+                                placeholder="Date"
+                                value={invoiceDetails.date}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+
+                        {/* Customer details */}
+                        <div className=" flex flex-col mb-8">
+                            <h2 className="text-lg font-semibold mb-4">Bill to</h2>
+
+                            <input
+                                type="date"
+                                placeholder="Due Date"
+                                value={invoiceDetails.date}
+                                onChange={handleInputChange}
+                            />
+                        </div></div>
+
+                    {/* Table of items */}
+                    <div>
+                        <h2 className="text-lg font-semibold mb-4">Items</h2>
+                        {/* Render inputs for items */}
+                    </div>
+
+                    {/* Total */}
+                    <div className="mt-8">
+                        <h2 className="text-lg font-semibold mb-4">Total</h2>
+                    </div>
+                </div>
+            );
+        } else {
+            // Render paragraph tags for viewing mode
+            contentToRender = (
+
+                <div className="bg-white p-8 rounded-lg shadow-md">
+                    <div className="flex justify-between mb-8">
+                        <div>
+                            <h1 className="text-2xl font-bold">Invoice</h1>
+                            <p>1234 Main Street, City, Country</p>
+                            <p>Email: example@example.com</p>
+                        </div>
+                        <div>
+                            <img src="/logo.png" alt="Company Logo" className="w-24 h-24" />
+                        </div>
+                    </div>
+
+                    {/* Invoice details */}
+                    <div className="flex justify-between">
+                        <div className="mb-8">
+                            <h2 className="text-lg font-semibold mb-4">Invoice Details</h2>
+                            <p>Invoice Number: INV-001</p>
+                            <p>Date: February 23, 2024</p>
+                        </div>
+
+                        {/* Customer details */}
+                        <div className="mb-8">
+                            <h2 className="text-lg font-semibold mb-4">Customer Details</h2>
+                            <p>Customer Name: John Doe</p>
+                            <p>Email: john@example.com</p>
+                        </div>
+                    </div>
+                    {/* Table of items */}
+                    <div>
+                        <h2 className="text-lg font-semibold mb-4">Items</h2>
+                        <table className="w-full border-collapse">
+                            <thead>
+                                <tr>
+                                    <th className="py-2 px-4 border">Description</th>
+                                    <th className="py-2 px-4 border">Quantity</th>
+                                    <th className="py-2 px-4 border">Price</th>
+                                    <th className="py-2 px-4 border">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td className="py-2 px-4 border">Item 1</td>
+                                    <td className="py-2 px-4 border">1</td>
+                                    <td className="py-2 px-4 border">$10.00</td>
+                                    <td className="py-2 px-4 border">$10.00</td>
+                                </tr>
+                                {/* Add more items as needed */}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Total */}
+                    <div className="mt-8">
+                        <h2 className="text-lg font-semibold mb-4">Total</h2>
+                        <p className="text-xl font-bold">$10.00</p>
+                    </div>
+                </div>
+
+            );
+
+        }
         modalContent = (
             <div className='w-full'>
                 <Dialog.Title
@@ -49,66 +232,8 @@ export default function Modal({ invoiceId }: Props) {
                 >
                     Invoice
                 </Dialog.Title>
-                <div className="mt-2 ">
-                    <div className="p-8">
-                        <div className="bg-white p-8 rounded-lg shadow-md">
-                            <div className="flex justify-between mb-8">
-                                <div>
-                                    <h1 className="text-2xl font-bold">Invoice</h1>
-                                    <p>1234 Main Street, City, Country</p>
-                                    <p>Email: example@example.com</p>
-                                </div>
-                                <div>
-                                    <img src="/logo.png" alt="Company Logo" className="w-24 h-24" />
-                                </div>
-                            </div>
-
-                            {/* Invoice details */}
-                            <div className="mb-8">
-                                <h2 className="text-lg font-semibold mb-4">Invoice Details</h2>
-                                <p>Invoice Number: INV-001</p>
-                                <p>Date: February 23, 2024</p>
-                            </div>
-
-                            {/* Customer details */}
-                            <div className="mb-8">
-                                <h2 className="text-lg font-semibold mb-4">Customer Details</h2>
-                                <p>Customer Name: John Doe</p>
-                                <p>Email: john@example.com</p>
-                            </div>
-
-                            {/* Table of items */}
-                            <div>
-                                <h2 className="text-lg font-semibold mb-4">Items</h2>
-                                <table className="w-full border-collapse">
-                                    <thead>
-                                        <tr>
-                                            <th className="py-2 px-4 border">Description</th>
-                                            <th className="py-2 px-4 border">Quantity</th>
-                                            <th className="py-2 px-4 border">Price</th>
-                                            <th className="py-2 px-4 border">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td className="py-2 px-4 border">Item 1</td>
-                                            <td className="py-2 px-4 border">1</td>
-                                            <td className="py-2 px-4 border">$10.00</td>
-                                            <td className="py-2 px-4 border">$10.00</td>
-                                        </tr>
-                                        {/* Add more items as needed */}
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            {/* Total */}
-                            <div className="mt-8">
-                                <h2 className="text-lg font-semibold mb-4">Total</h2>
-                                <p className="text-xl font-bold">$10.00</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {editButton}
+                <div className="mt-2 ">{contentToRender}</div>
                 <div className="mt-4">
                     <button
                         type="button"
