@@ -1,11 +1,13 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import DynamicTable from '../../components/table/index';
+import DynamicTable from './table/index';
+import { Link } from 'react-router-dom';
+import { InvoiceService } from '../../services/invoices';
+type Props = {
+    data: any
+}
 
-type Props = { invoices: [] };
-
-export default function ViewInvoices({ invoices }: Props) {
-
-
+export default function ViewInvoices({ data }: Props) {
+    console.log("data", data)
     return (
         <Fragment >
             <div className='flex flex-col'>
@@ -13,15 +15,13 @@ export default function ViewInvoices({ invoices }: Props) {
                     <div className='flex'>
                         Filter
                     </div>
-                    <button className="bg-blue-600 text-white w-auto  rounded-md">Créer une facture</button>
+                    <Link to={"/createInvoice"} className="bg-blue-100 p-3 hover:text-white hover:bg-blue-400 text-blue-600 w-auto transition ease-in  rounded-md">Créer une facture</Link>
 
                 </div>
-                <DynamicTable data={invoices} columnMapping={{
+                <DynamicTable data={data} feature='invoices' columnMapping={{
                     "invoice_name": "Invoice Name",
                     "invoice_number": "Bill Number",
                     "status": "Status",
-                    "total": "Total",
-                    "currency": "Currency",
                     "created_at": "Creation Date",
                     "actions": "Actions"
                 }}>

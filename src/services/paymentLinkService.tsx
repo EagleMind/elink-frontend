@@ -30,7 +30,7 @@ export const PaymentLinksService = {
     // Get  payment link by ID
     getById: async (id: string) => {
         try {
-            const response = await axiosInstance.get(`${PAYMENTLINKS_BASE_URL}/${id}`);
+            const response = await axiosInstance.get(`${PAYMENTLINKS_BASE_URL}/getPaymentLinkDetails/${id}`);
             return response.data;
         } catch (error) {
             throw error;

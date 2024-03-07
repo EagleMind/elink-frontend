@@ -1,24 +1,28 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import DynamicTable from '../../components/table/index';
+import { Fragment, useEffect, useState } from 'react';
+import DynamicTable from './table/index';
+type Props = {
+    data: any
+}
 
-type Props = { paymentLinks: [] };
+export default function ViewPaymentLinks({ data }: Props) {
 
-export default function ViewPaymentLinks({ paymentLinks }: Props) {
-
+    useEffect(() => {
+    }, [data]);
 
     return (
         <Fragment >
-            <DynamicTable data={paymentLinks} columnMapping={{
-                "invoice_name": "Invoice Name",
-                "invoice_number": "N.Invoice",
-                "link_type": "Link Type",
-                "nb_clicks": "Number of Clicks",
-                "conversion_rate": "Conversion Rate (%)",
-                "time_of_clicks": "Time of Clicks",
-                "abandonment_rate": "Abandonment Rate",
-                "average_payment_amount": "Average Payment Amount",
-                "created_at": "Creation Date",
-            }} ></DynamicTable>
+            {data && data.length !== 0 ? (
+                <DynamicTable feature='paymentlinks' data={data} columnMapping={{
+                    "invoice_name": "Invoice Name",
+                    "link_type": "Link Type",
+                    "created_at": "Creation Date",
+                    "actions": "Actions"
+                }} ></DynamicTable>
+            ) : (
+                "no data yet"
+            )}
+
+
         </Fragment>
     );
 }

@@ -25,6 +25,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ routes }) => {
                 <div className="flex-1">
                     <nav className="grid items-start px-4 text-sm font-medium">
                         {routes.map((route, index) => (
+                            route.path !== '/editInvoice/:invoiceId' && route.path !== '/getPaymentLinkDetails/:paymentlinkId' &&
                             <Link
                                 key={index}
                                 to={route.path}
@@ -33,7 +34,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ routes }) => {
                                     : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 text-[14px]'
                                     }`}
                             >
-                                {/* You can put your SVG icon and text here */}
                                 {route.title}
                             </Link>
                         ))}

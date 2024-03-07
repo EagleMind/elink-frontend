@@ -2,14 +2,16 @@ import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
 interface InvoiceDetails {
-    vendorName: string;
-    clientName: string;
-    deliveryDate: Date;
-    dueDate: Date;
+    vendor_name: string;
+    client_name: string;
+    delivery_date: Date;
+    due_date: Date;
+    invoice_name: string;
+    total: number;
 }
 
 interface Item {
-    name: string;
+    description: string;
     price: number;
 }
 
@@ -18,7 +20,6 @@ interface Props {
     items: Item[];
     newItemName: string;
     newItemPrice: number;
-    total: number,
 }
 
 const styles = StyleSheet.create({
@@ -101,25 +102,25 @@ const styles = StyleSheet.create({
     },
 });
 
-const PDFInvoice: React.FC<Props> = ({ invoiceDetails, items, total }) => (
+const PDFInvoice: React.FC<Props> = ({ invoiceDetails, items }) => (
     <Document>
         <Page size="A4" style={styles.container}>
             <View style={styles.headerSection}>
                 <Text style={styles.header}>Invoice</Text>
-                <Text>Invoice #001</Text>
+                <Text>{invoiceDetails.invoice_name}</Text>
             </View>
             <View style={styles.BillingInfos}>
                 <View style={styles.column}>
                     <Text style={styles.label}>Recipient</Text>
-                    <Text style={styles.input}>{invoiceDetails.vendorName}</Text>
+                    <Text style={styles.input}>{invoiceDetails.vendor_name}</Text>
                     <Text style={styles.label}>Date de livraison</Text>
-                    <Text style={styles.input}>{invoiceDetails.deliveryDate}</Text>
+                    <Text style={styles.input}>{invoiceDetails.delivery_date}</Text>
                 </View>
                 <View style={styles.column}>
                     <Text style={styles.label}>Destinataire</Text>
-                    <Text style={styles.input}>{invoiceDetails.clientName}</Text>
+                    <Text style={styles.input}>{invoiceDetails.client_name}</Text>
                     <Text style={styles.label}>Date d'expiration</Text>
-                    <Text style={styles.input}>{invoiceDetails.dueDate}</Text>
+                    <Text style={styles.input}>{invoiceDetails.due_date}</Text>
                 </View>
             </View>
 
@@ -130,13 +131,13 @@ const PDFInvoice: React.FC<Props> = ({ invoiceDetails, items, total }) => (
                 </View>
                 {items.map((item, index) => (
                     <View style={styles.items}>
-                        <Text style={styles.input}>{item.name}</Text>
+                        <Text style={styles.input}>{item.description}</Text>
                         <Text style={styles.input}>{item.price.toFixed(2)}</Text>
                     </View>
                 ))}
                 <View style={styles.flexRow}>
                     <Text style={styles.label}>Total:</Text>
-                    <Text style={styles.label}>{total}</Text>
+                    <Text style={styles.label}>{invoiceDetails.total}</Text>
                 </View>
 
             </View>

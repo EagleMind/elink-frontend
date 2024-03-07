@@ -1,43 +1,33 @@
-import { faEye, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faEye, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { InvoiceService } from '../../services/invoices'
+import moment from 'moment'
+import { Link } from 'react-router-dom'
 type Props = {
-    invoiceId: string
-}
-type InvoiceDetails = {
-    invoiceNumber: string;
-    date: string;
-    // Add more fields as needed
+    id: string
+    feature: string;
+
 }
 
 type ActionType = 'view' | 'delete' | 'edit';
 
-export default function Modal({ invoiceId }: Props) {
+export default function Modal({ id, feature }: Props) {
     const [loading, setIsLoading] = useState(false);
     let [isOpen, setIsOpen] = useState(false)
     const [actionType, setAction] = useState("");
-    const [isEditing, setIsEditing] = useState(false); // State to track editing mode
+
+    const getInvoiceDetails = async (id: string) => {
+        setIsLoading(true)
+        const invoiceDetails = await InvoiceService.getById(id, "single")
+        setInvoiceDetails(invoiceDetails)
+        setIsLoading(false)
+    }
 
 
-    // Inputs states //
+    const [invoiceDetails, setInvoiceDetails] = useState<any>({});
 
-
-    const [invoiceDetails, setInvoiceDetails] = useState({
-        invoiceNumber: "INV-001",
-        date: "February 23, 2024",
-        vendorName: "test User",
-        address: "Steer 90",
-        email: "hassen@text.com"
-    });
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        setInvoiceDetails(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
 
     // Inputs states //
     function closeModal() {
@@ -72,158 +62,79 @@ export default function Modal({ invoiceId }: Props) {
     let modalContent;
 
     if (actionType === 'view') {
-        const editButton = (
-            <button
-                className="absolute top-2 right-2 bg-gray-200 rounded-full p-2"
-                onClick={() => setIsEditing(prevState => !prevState)} // Toggle isEditing state
-            >
-                {isEditing ? "Cancel" : "Edit"}
-            </button>
-        );
 
         let contentToRender;
 
-        if (isEditing) {
-            // Render inputs for editing mode
-            contentToRender = (
+        // Render paragraph tags for viewing mode
+        contentToRender = (
 
-                <div className="bg-white p-8 rounded-lg shadow-md">
-                    <div className="flex justify-between mb-8">
-                        <div className="flex flex-col">
-                            <h1 className="text-2xl font-bold">Invoice</h1>
-                            <input
-                                type="text"
-                                placeholder="1234 Main Street, City, Country"
-                                value={invoiceDetails.address}
-                                onChange={handleInputChange}
-                            />
-                            <input
-                                type="text"
-                                placeholder="1234 Main Street, City, Country"
-                                value={invoiceDetails.email}
-                                onChange={handleInputChange}
-                            />
+            <div className='flex flex-col w-full'>
+                <div className="p-5 space-y-20 overflow-y-auto w-full scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-corner-rounded-full scrollbar scrollbar-thumb-slate-200 scrollbar-track-slate-300">
 
-                        </div>
-                        <div>
-                            <img src="/logo.png" alt="Company Logo" className="w-24 h-24" />
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-2xl font-bold">Facutre</h1>
+                        <div className='flex flex-col'>
+                            <div className="font-bold">Nom Facture</div>
+                            <label>
+                                {invoiceDetails.invoice_name}
+                            </label>
                         </div>
                     </div>
-
-                    {/* Invoice details */}
-                    <div className="flex justify-between">
-                        <div className=" flex flex-col mb-8">
-                            <h2 className="text-lg font-semibold mb-4">Bill from</h2>
-                            <input
-                                type="text"
-                                placeholder="Vendor name"
-                                value={invoiceDetails.invoiceNumber}
-                                onChange={handleInputChange}
-                            />
-                            <input
-                                type="text"
-                                placeholder="Invoice Number"
-                                value={invoiceDetails.vendorName}
-                                onChange={handleInputChange}
-                            />
-
-                            <input
-                                type="date"
-                                placeholder="Date"
-                                value={invoiceDetails.date}
-                                onChange={handleInputChange}
-                            />
+                    <div className="flex justify-between mb-6 ">
+                        <div className='flex flex-col items-start space-y-4'>
+                            <div className="font-bold">Recipient</div>
+                            <label>
+                                {invoiceDetails.vendor_name}
+                            </label>
+                            <div className="font-bold">Date de livraison</div>
+                            <label>
+                                {moment(invoiceDetails.delivery_date).format('YYYY-MM-DD')}
+                            </label>
                         </div>
-
-                        {/* Customer details */}
-                        <div className=" flex flex-col mb-8">
-                            <h2 className="text-lg font-semibold mb-4">Bill to</h2>
-
-                            <input
-                                type="date"
-                                placeholder="Due Date"
-                                value={invoiceDetails.date}
-                                onChange={handleInputChange}
-                            />
-                        </div></div>
-
-                    {/* Table of items */}
-                    <div>
-                        <h2 className="text-lg font-semibold mb-4">Items</h2>
-                        {/* Render inputs for items */}
-                    </div>
-
-                    {/* Total */}
-                    <div className="mt-8">
-                        <h2 className="text-lg font-semibold mb-4">Total</h2>
-                    </div>
-                </div>
-            );
-        } else {
-            // Render paragraph tags for viewing mode
-            contentToRender = (
-
-                <div className="bg-white p-8 rounded-lg shadow-md">
-                    <div className="flex justify-between mb-8">
-                        <div>
-                            <h1 className="text-2xl font-bold">Invoice</h1>
-                            <p>1234 Main Street, City, Country</p>
-                            <p>Email: example@example.com</p>
-                        </div>
-                        <div>
-                            <img src="/logo.png" alt="Company Logo" className="w-24 h-24" />
+                        <div className='flex flex-col items-start space-y-4'>
+                            <div className="font-bold ">Destinataire</div>
+                            <label>
+                                {invoiceDetails.client_name}
+                            </label>
+                            <div className="font-bold ">Date d'expiration </div>
+                            <label>
+                                {moment(invoiceDetails.due_date).format('YYYY-MM-DD')}
+                            </label>
                         </div>
                     </div>
+                    <table className="w-full border-collapse">
+                        <thead>
+                            <tr>
+                                <th className="text-left py-2">Article</th>
+                                <th className="text-right py-2">Somme</th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                            {invoiceDetails.items.map((item: any, index: number) => (
+                                <tr key={index}>
+                                    <td className="border-t py-2 text-left">{item.description}</td>
+                                    <td className="border-t text-right py-2">${item.price.toFixed(2)}</td>
 
-                    {/* Invoice details */}
-                    <div className="flex justify-between">
-                        <div className="mb-8">
-                            <h2 className="text-lg font-semibold mb-4">Invoice Details</h2>
-                            <p>Invoice Number: INV-001</p>
-                            <p>Date: February 23, 2024</p>
-                        </div>
-
-                        {/* Customer details */}
-                        <div className="mb-8">
-                            <h2 className="text-lg font-semibold mb-4">Customer Details</h2>
-                            <p>Customer Name: John Doe</p>
-                            <p>Email: john@example.com</p>
-                        </div>
-                    </div>
-                    {/* Table of items */}
-                    <div>
-                        <h2 className="text-lg font-semibold mb-4">Items</h2>
-                        <table className="w-full border-collapse">
-                            <thead>
-                                <tr>
-                                    <th className="py-2 px-4 border">Description</th>
-                                    <th className="py-2 px-4 border">Quantity</th>
-                                    <th className="py-2 px-4 border">Price</th>
-                                    <th className="py-2 px-4 border">Total</th>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td className="py-2 px-4 border">Item 1</td>
-                                    <td className="py-2 px-4 border">1</td>
-                                    <td className="py-2 px-4 border">$10.00</td>
-                                    <td className="py-2 px-4 border">$10.00</td>
-                                </tr>
-                                {/* Add more items as needed */}
-                            </tbody>
-                        </table>
-                    </div>
+                            ))}
 
-                    {/* Total */}
-                    <div className="mt-8">
-                        <h2 className="text-lg font-semibold mb-4">Total</h2>
-                        <p className="text-xl font-bold">$10.00</p>
-                    </div>
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td className="border-t font-bold py-2  text-left">Totale (Tous charges exclue):</td>
+                                <td className="border-t font-bold text-right py-2">{invoiceDetails.total}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
 
-            );
 
-        }
+            </div>
+
+
+        );
+
         modalContent = (
             <div className='w-full'>
                 <Dialog.Title
@@ -232,7 +143,6 @@ export default function Modal({ invoiceId }: Props) {
                 >
                     Invoice
                 </Dialog.Title>
-                {editButton}
                 <div className="mt-2 ">{contentToRender}</div>
                 <div className="mt-4">
                     <button
@@ -262,8 +172,8 @@ export default function Modal({ invoiceId }: Props) {
                 <div className="mt-4 space-x-2">
                     {loading ? <button
                         type="button"
-                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                        onClick={() => deleteInvoice(invoiceId)}
+                        className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                        onClick={() => deleteInvoice(id)}
                     >
                         <svg className="animate-spin " viewBox="0 0 24 24">
 
@@ -271,8 +181,8 @@ export default function Modal({ invoiceId }: Props) {
                         Deleting...
                     </button> : <button
                         type="button"
-                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                        onClick={() => deleteInvoice(invoiceId)}
+                        className="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                        onClick={() => deleteInvoice(id)}
                     >
 
                         Delete
@@ -289,14 +199,18 @@ export default function Modal({ invoiceId }: Props) {
             </>
         );
     }
-
+    useEffect(() => {
+        getInvoiceDetails(id)
+    }, [id])
     return (
         <>
             <div className=" inset-0 flex items-center justify-center space-x-2">
+                {feature === "invoices" &&
+                    <div>
+                        <button onClick={() => openModal("view")} className='bg-blue-100  hover:text-white hover:bg-blue-400 text-blue-600 w-auto transition ease-in  rounded-md mx-1' ><FontAwesomeIcon size='lg' icon={faEye} /></button>
+                        <button onClick={() => openModal("delete")} className='bg-blue-100  hover:text-white hover:bg-blue-400 text-blue-600 w-auto transition ease-in  rounded-md ' ><FontAwesomeIcon size='lg' icon={faTrash} /></button>
+                    </div>}
 
-                <button onClick={() => openModal("view")} className='border-1 border-gray-200' ><FontAwesomeIcon icon={faEye} /></button>
-                <button onClick={() => openModal("delete")} className='border-1 border-gray-200' ><FontAwesomeIcon icon={faTrash} /></button>
-                <button onClick={() => openModal("edit")} className='border-1 border-gray-200'><FontAwesomeIcon icon={faPenToSquare} /></button>
 
             </div>
 
