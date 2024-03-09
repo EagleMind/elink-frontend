@@ -1,33 +1,40 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import DynamicTable from './table/index';
-import { Link } from 'react-router-dom';
-import { InvoiceService } from '../../services/invoices';
+import BottomNav from '../../components/common/bottomNav';
 type Props = {
     data: any
 }
 
 export default function ViewInvoices({ data }: Props) {
-    console.log("data", data)
+    const [pageSize, setPageSize] = useState(10);
+    const [page, setPage] = useState(1);
+    const totalPages = Math.ceil(data.invoicesCount);
+    const [loading, setLoading] = useState(true); // Add loading state
+    useEffect(() => {
+        data ? setLoading(false) : setLoading(true)
+    }, [loading, pageSize, page]);
     return (
+
         <Fragment >
-            <div className='flex flex-col'>
-                <div className='flex justify-between items-center p-5'>
-                    <div className='flex'>
-                        Filter
-                    </div>
-                    <Link to={"/createInvoice"} className="bg-blue-100 p-3 hover:text-white hover:bg-blue-400 text-blue-600 w-auto transition ease-in  rounded-md">Créer une facture</Link>
-
-                </div>
-                <DynamicTable data={data} feature='invoices' columnMapping={{
-                    "invoice_name": "Invoice Name",
-                    "invoice_number": "Bill Number",
-                    "status": "Status",
-                    "created_at": "Creation Date",
-                    "actions": "Actions"
-                }}>
-                </DynamicTable>
-            </div>
-
+            {loading ? (
+                <div className="animate-pulse bg-gray-200 text-gray-400 rounded-lg p-10 m-5">Loading...</div>
+            ) : (
+                <Fragment>
+                    {data && data.length !== 0 ? (
+                        <DynamicTable data={data.invoices} columnMapping={[
+                            "Nom de facture",
+                            "Réference",
+                            "Status",
+                            "Date de creation",
+                            "Date d'éxpiration",
+                            "Actions"]}>
+                        </DynamicTable>
+                    ) : (
+                        <div className='bg-gray-50 text-gray-400 rounded-lg p-10 m-5 '>No data available</div>
+                    )}
+                    <BottomNav totalPages={totalPages} page={page} pageSize={pageSize} setPageSize={setPageSize} setPage={setPage}></BottomNav>
+                </Fragment>
+            )}
         </Fragment>
     );
 }

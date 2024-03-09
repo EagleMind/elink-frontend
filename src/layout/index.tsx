@@ -5,7 +5,6 @@ import { MAIN_ROUTES } from '../routes'
 
 const Layout: React.FC = () => {
   const location = useLocation();
-  console.log(location.pathname, MAIN_ROUTES.map(pathname => { return pathname }))
   return (
     <div className="flex h-screen  w-screen">
       <SideMenu routes={MAIN_ROUTES}></SideMenu>

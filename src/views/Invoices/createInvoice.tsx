@@ -4,7 +4,6 @@ import { PDFViewer } from '@react-pdf/renderer';
 import { InvoiceService } from '../../services/invoices';
 import moment from "moment"
 import { useParams } from 'react-router-dom';
-// import { createInvoice } from './redux/actions'; // Make sure you have your action creators defined
 
 
 interface Item {
@@ -40,7 +39,7 @@ function CreateAndEditInvoice() {
         const { name, value } = event.target;
         setInvoiceDetails(prevState => ({
             ...prevState,
-            [name]: typeof value ? moment(value).format('YYYY-MM-DD') : value
+            [name]: name === ("delivery_date" || "due_date") ? moment(value).format('YYYY-MM-DD') : value
         }));
     };
     const [newItemName, setNewItemName] = useState<string>();
@@ -96,7 +95,7 @@ function CreateAndEditInvoice() {
         }
     };
     const getInvoiceDetails = async (invoiceId: string) => {
-        const invoiceDetails = await InvoiceService.getById(invoiceId, "single")
+        const invoiceDetails = await InvoiceService.getById(invoiceId)
         setInvoiceDetails(invoiceDetails)
     }
     useEffect(() => {
@@ -266,7 +265,7 @@ function CreateAndEditInvoice() {
                 </div>
             </div> */}
             {/* Blue Theme */}
-            <div className='flex h-[80vh] justify-between'>
+            <div className='flex h-full justify-between'>
                 <div className='flex flex-col w-full'>
                     <div className="p-5 space-y-20 overflow-y-auto w-full scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-corner-rounded-full scrollbar scrollbar-thumb-slate-200 scrollbar-track-slate-300">
 

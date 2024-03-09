@@ -17,7 +17,6 @@ const LoginPage: React.FC = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      console.log("clicked")
       await auth.signIn(email, password);
       navigate('/')
     } catch (err: any) {

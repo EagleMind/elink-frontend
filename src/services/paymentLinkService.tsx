@@ -20,7 +20,6 @@ export const PaymentLinksService = {
     getAll: async () => {
         try {
             const response = await axiosInstance.get(PAYMENTLINKS_BASE_URL);
-            console.log(response)
             return response.data;
         } catch (error) {
             throw error;
@@ -38,9 +37,18 @@ export const PaymentLinksService = {
     },
 
     // Update payment link by ID
-    updateById: async (id: string, updatedData: any) => {
+    linkStatusById: async (id: string, isExpired: boolean) => {
         try {
-            const response = await axiosInstance.put(`${PAYMENTLINKS_BASE_URL}/${id}`, updatedData);
+            const response = await axiosInstance.put(`${PAYMENTLINKS_BASE_URL}/status/${id}`, { isExpired: isExpired });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+    // Update payment link by ID
+    updateById: async (id: string) => {
+        try {
+            const response = await axiosInstance.put(`${PAYMENTLINKS_BASE_URL}/${id}`, true);
             return response.data;
         } catch (error) {
             throw error;

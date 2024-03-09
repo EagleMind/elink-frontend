@@ -1,8 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom'; // Import useLocation hook
+import { Link, useLocation, useParams } from 'react-router-dom'; // Import useLocation hook
 import ViewPaymentLinks from '../../../views/paymentLinks/viewPaymentLinks';
 import { PaymentLinksService } from '../../../services/paymentLinkService';
 import PaymentLinkPerformance from '../../../views/paymentLinks/linkPerformanceView';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {};
 
@@ -49,6 +51,14 @@ export default function PaymentLinksContainer({ }: Props) {
 
     return (
         <Fragment>
+            <div className='flex justify-between items-center p-5'>
+                <div className='flex'>
+                    Filter
+                </div>
+                <Link to={"/createInvoice"} className="bg-blue-100 p-3 hover:text-white hover:bg-blue-400 text-blue-600 w-auto transition ease-in  rounded-md"><FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> Créer un Lien</Link>
+
+            </div>
+            <hr></hr>
             <ViewPaymentLinks data={paymentlink} />
         </Fragment>
     );

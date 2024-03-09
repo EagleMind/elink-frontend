@@ -1,11 +1,12 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import moment from 'moment';
 
 interface InvoiceDetails {
     vendor_name: string;
     client_name: string;
-    delivery_date: Date;
-    due_date: Date;
+    delivery_date: string;
+    due_date: string;
     invoice_name: string;
     total: number;
 }
@@ -114,13 +115,13 @@ const PDFInvoice: React.FC<Props> = ({ invoiceDetails, items }) => (
                     <Text style={styles.label}>Recipient</Text>
                     <Text style={styles.input}>{invoiceDetails.vendor_name}</Text>
                     <Text style={styles.label}>Date de livraison</Text>
-                    <Text style={styles.input}>{invoiceDetails.delivery_date}</Text>
+                    <Text style={styles.input}>{invoiceDetails.delivery_date ? moment(invoiceDetails.delivery_date).format("DD-MM-YYYY") : null}</Text>
                 </View>
                 <View style={styles.column}>
                     <Text style={styles.label}>Destinataire</Text>
                     <Text style={styles.input}>{invoiceDetails.client_name}</Text>
                     <Text style={styles.label}>Date d'expiration</Text>
-                    <Text style={styles.input}>{invoiceDetails.due_date}</Text>
+                    <Text style={styles.input}>{invoiceDetails.due_date ? moment(invoiceDetails.due_date).format("DD-MM-YYYY") : null}</Text>
                 </View>
             </View>
 

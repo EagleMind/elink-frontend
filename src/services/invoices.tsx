@@ -42,10 +42,9 @@ export const InvoiceService = {
     },
 
     // Get all invoices
-    getAll: async () => {
+    getAll: async (query: string) => {
         try {
-            const response = await axiosInstance.get(INVOICES_BASE_URL);
-
+            const response = await axiosInstance.get(`${INVOICES_BASE_URL}/?link_type=${query}`);
             return response.data;
         } catch (error) {
             throw error;
@@ -53,9 +52,9 @@ export const InvoiceService = {
     },
 
     // Get an invoice by ID
-    getById: async (id: string, query: string) => {
+    getById: async (id: string) => {
         try {
-            const response = await axiosInstance.get(`${INVOICES_BASE_URL}/${id}?link_type=${query}`);
+            const response = await axiosInstance.get(`${INVOICES_BASE_URL}/${id}`);
             return response.data;
         } catch (error) {
             throw error;
