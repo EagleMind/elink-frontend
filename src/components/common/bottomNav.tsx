@@ -21,7 +21,7 @@ const BottomNav = ({
         <select
           className="text-[14px] border-none rounded text-[#4B506D] outline-none mr-16"
           value={pageSize}
-          onChange={(e) => setPageSize(e.target.value)}
+          onChange={(e) => setPageSize(parseInt(e.target.value))}
         >
           {[10, 20, 30, 40].map((size) => (
             <option key={size} value={size}>

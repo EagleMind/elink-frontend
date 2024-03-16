@@ -2,6 +2,7 @@ import { faFileCirclePlus, faFileLines, faHouse, faLink } from '@fortawesome/fre
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import logo from '../../public/assets/logo.png'; // Adjust the path as per your project structure
 
 interface Route {
     path: string;
@@ -22,18 +23,15 @@ const SideMenu: React.FC<SideMenuProps> = ({ routes }) => {
     const location = useLocation();
 
     return (
-        <div className="border-r bg-gradient-to-br from-cyan-500 to-blue-500 lg:block dark:bg-gray-800/40 w-1/6">
+        <div className=" bg-gradient-to-br from-cyan-500 to-blue-500 lg:block dark:bg-gray-800/40 w-1/6">
             <div className="flex flex-col gap-2">
-                <div className="flex h-[60px] items-center px-6 justify-center border-b">
-                    <Link to="/" className="flex items-center gap-2 font-semibold ">
-
-                        <span className='text-[20px] text-white'>ExpressPay</span>
-                    </Link>
+                <div className="flex h-[60px] items-center px-6 justify-center border-b bg-white">
+                    <img src={logo} alt="Logo" width={150} className='p-5' />
                 </div>
                 <div className="flex-1">
                     <nav className="grid items-start px-2 text-sm font-medium" >
                         {routes.map((route, index) => (
-                            route.path !== '/editInvoice/:invoiceId' && route.path !== '/getPaymentLinkDetails/:paymentlinkId' &&
+                            route.path !== '/editInvoice/:invoiceId' && route.path !== '/getPaymentLinkDetails/:paymentlinkId' && route.path !== '/createPaymentLink/:id' &&
                             <Link
                                 key={index}
                                 to={route.path}

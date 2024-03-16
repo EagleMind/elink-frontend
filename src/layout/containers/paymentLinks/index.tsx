@@ -1,65 +1,52 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom'; // Import useLocation hook
 import ViewPaymentLinks from '../../../views/paymentLinks/viewPaymentLinks';
-import { PaymentLinksService } from '../../../services/paymentLinkService';
-import PaymentLinkPerformance from '../../../views/paymentLinks/linkPerformanceView';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { RootState } from '../../../redux/store';
+import { fetchPaymentLinks } from '../../../redux/features/paymentLinks';
+import CreatePaymentLink from '../../../views/paymentLinks/createPaymentLink';
+import { setSearchTerm } from '../../../redux/features/paymentLinks';
 
-type Props = {};
 
-interface PaymentLink {
-    _id: string;
-    invoice_id: string;
-    link_type: string;
-    url: string;
-    created_at: Date;
-    payment_method?: string;
-    currency?: string;
-    performance_metrics: {
-        nb_clicks: number;
-        userLocation: { latitude: number; longitude: number }[];
-        conversion_rate: number;
-        referral_source?: string;
-        device_type?: string;
-        time_of_clicks: Date[];
-        abandonment_rate: number;
-        average_payment_amount: number;
+export default function PaymentLinksContainer() {
+    const dispatch = useAppDispatch();
+    const { pageSize, page, searchTerm } = useAppSelector((state: RootState) => state.paymentLinks);
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const term = event.target.value;
+        dispatch(setSearchTerm(term));
     };
-    isExpired: boolean;
-}
-export default function PaymentLinksContainer({ }: Props) {
-    const [paymentlink, setPaymentLinks] = useState<PaymentLink[]>([]);
+    useEffect(() => {
+        dispatch(fetchPaymentLinks(page, pageSize, searchTerm));
+    }, [dispatch, searchTerm]);
+
+    const renderComponent = () => {
+        if (location.pathname === '/paymentLinks') {
+            return <div className='flex flex-col'>
+                <div className='flex p-5 justify-between'>
+                    <input
+                        type="text"
+                        className="p-16 bg-white focus:outline-none focus:shadow-outline border border-blue-300 rounded-md py-2 px-2 block appearance-none leading-normal"
+                        placeholder="Search..."
+                        value={searchTerm}
+                        onChange={handleSearch} />
+
+                </div>
+                <hr></hr><ViewPaymentLinks />
+            </div>
 
 
-
-
-    const getPaymentLinks = async () => {
-        try {
-            const response = await PaymentLinksService.getAll();
-            setPaymentLinks(response);
-        } catch (error) {
-            console.error('Error fetching invoices:', error);
+        } else {
+            return (
+                <Fragment>
+                    <CreatePaymentLink />
+                </Fragment>
+            );
         }
     };
 
-    useEffect(() => {
-        getPaymentLinks();
-
-    }, []);
-
-
     return (
         <Fragment>
-            <div className='flex justify-between items-center p-5'>
-                <div className='flex'>
-                    Filter
-                </div>
-                <Link to={"/createInvoice"} className="bg-blue-100 p-3 hover:text-white hover:bg-blue-400 text-blue-600 w-auto transition ease-in  rounded-md"><FontAwesomeIcon icon={faPlus}></FontAwesomeIcon> Créer un Lien</Link>
 
-            </div>
-            <hr></hr>
-            <ViewPaymentLinks data={paymentlink} />
+            {renderComponent()}
         </Fragment>
     );
 }

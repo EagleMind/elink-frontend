@@ -5,8 +5,8 @@ import moment from 'moment';
 interface InvoiceDetails {
     vendor_name: string;
     client_name: string;
-    delivery_date: string;
-    due_date: string;
+    delivery_date: Date;
+    due_date: Date;
     invoice_name: string;
     total: number;
 }

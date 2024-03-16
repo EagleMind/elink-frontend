@@ -42,9 +42,9 @@ export const InvoiceService = {
     },
 
     // Get all invoices
-    getAll: async (query: string) => {
+    getAll: async (pageSize: number, page: number, searchTerm: string) => {
         try {
-            const response = await axiosInstance.get(`${INVOICES_BASE_URL}/?link_type=${query}`);
+            const response = await axiosInstance.get(`${INVOICES_BASE_URL}/?pageSize=${pageSize}&page=${page}&searchTerm=${searchTerm}`);
             return response.data;
         } catch (error) {
             throw error;

@@ -12,7 +12,7 @@ const Layout: React.FC = () => {
         <div className='text-left  p-2 md:gap-8 md:p-6 '>
           <h1 className=' text-[30px] font-semibold text-gray-600'>{MAIN_ROUTES.map(pathname => { return location.pathname == pathname.path ? pathname.title : null })}</h1>
         </div>
-        <main className="flex flex-col gap-4 p-4 md:gap-8 md:p-6 h-full">
+        <main className="flex flex-col gap-4 p-4 md:gap-8 md:p-6 ">
           <div className="border shadow-sm rounded-lg">
 
             <Outlet />

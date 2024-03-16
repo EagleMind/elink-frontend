@@ -1,31 +1,26 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faPenToSquare, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faChartLine, faEye, faPenToSquare, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
 import { InvoiceService } from '../../../services/invoices';
 import { Dialog, Transition } from '@headlessui/react';
-
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { deleteInvoice } from '../../../redux/features/invoices';
+import { RootState } from '../../../redux/store';
 interface TableProps {
-  data: any[]; // assuming each item in data has the same structure
   columnMapping: string[]; // optional column name mapping
 }
 
-const DynamicTable: React.FC<TableProps> = ({ data, columnMapping }) => {
+const DynamicTable: React.FC<TableProps> = ({ columnMapping }) => {
+  const dispatch = useAppDispatch();
   const [loading, setIsLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteInvoiceId, setDeleteInvoiceId] = useState<string>(''); // State to hold the ID of the invoice to delete
   const [openFetchDialog, setOpenFetchDialog] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState('');
   const [invoiceDetails, setInvoiceDetails] = useState<any>(null);
-  if (!data || data.length === 0) {
-    return <div className='bg-gray-50 text-gray-400 rounded-lg p-10 m-5'>No data available</div>;
-  }
-
-  // Check if the invoices have any payment links
-  const linkIsAvailable = data.some((el: any) => {
-    return el.reusable_payment_link && el.single_payment_link;
-  });
+  const { invoices } = useAppSelector((state: RootState) => state.invoices);
 
   useEffect(() => { }, [loading]);
 
@@ -33,6 +28,7 @@ const DynamicTable: React.FC<TableProps> = ({ data, columnMapping }) => {
     try {
       await InvoiceService.deleteById(deleteInvoiceId)
       setOpenDeleteDialog(false);
+      dispatch(deleteInvoice(deleteInvoiceId))
     } catch (error) {
     }
   };
@@ -41,7 +37,6 @@ const DynamicTable: React.FC<TableProps> = ({ data, columnMapping }) => {
     setIsLoading(true);
     try {
       const invoice = await InvoiceService.getById(id);
-      console.log("invoice", invoice);
       setInvoiceDetails(invoice);
     } catch (error) {
       // Handle error
@@ -59,38 +54,32 @@ const DynamicTable: React.FC<TableProps> = ({ data, columnMapping }) => {
 
   return (
     <Fragment>
-      <table className="table-auto w-full  bg-gradient-to-br from-cyan-500 to-blue-500">
+      <table className="table-auto w-full  bg-white">
         <thead>
           <tr>
             {columnMapping.map((column, index) => (
-              <th
-                className="p-5 text-center text-xs font-mulish text-grey1 md:text-[14px] bg-blue-400 text-white "
-                key={index}
-              >
-                {column}
-              </th>
+              <th className={`p-5 ${column === "Actions" ? "text-center" : "text-left"} text-xs font-mulish text-grey1 md:text-[14px] bg-blue-400 text-white`}
+                key={index}>{column}</th>
             ))}
           </tr>
         </thead>
-        <tbody>
-          {data.map((row) => (
-            <tr key={row._id} className='group'>
+        <tbody >
+          {invoices.map((row) => (
+            <tr key={row._id} className='group' >
               <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{row.invoice_name}</td>
               <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{row.invoice_number}</td>
-              {!linkIsAvailable ?? (
-                <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">
-                  {row.reusable_payment_link.link_type ?? row.single_payment_link.link_type}
-                </td>
-              )}
+
+              <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">
+                {row.payment_link_params ? (
+                  row.payment_link_params.link_type) : <span>Pas de lien</span>}
+              </td>
+
               <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{row.status}</td>
               <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{moment(row.delivery_date).format('YYYY-MM-DD')}</td>
               <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{moment(row.due_date).format('YYYY-MM-DD')}</td>
-              <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black  ">
-                <div className='flex'>
-                  <Link className='bg-blue-100 flex items-center  hover:text-white   hover:bg-blue-400  text-blue-600 w-auto transition ease-in px-4 rounded-md' to={`/editInvoice/${row._id}`} >
-                    <FontAwesomeIcon fontSize={20} className='cursor-pointer  px-2' icon={faPenToSquare} />
-                    Modifié
-                  </Link>
+              <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black  invisible group-hover:visible">
+                <div className='flex justify-center'>
+
                   <button
                     className='bg-blue-100 flex items-center  hover:text-white   hover:bg-blue-400  text-blue-600 w-auto transition ease-in rounded-md mx-2'
                     onClick={() => {
@@ -99,23 +88,36 @@ const DynamicTable: React.FC<TableProps> = ({ data, columnMapping }) => {
                       setOpenDeleteDialog(true);
                     }}
                   >
-                    <FontAwesomeIcon icon={faTrash} fontSize={20} className='cursor-pointer  px-2' /> Suprimer
+                    <FontAwesomeIcon icon={faTrash} fontSize={20} className='cursor-pointer  px-2' />
                   </button>
                   <button
-                    className='bg-blue-100 flex items-center  hover:text-white   hover:bg-blue-400  text-blue-600 w-auto transition ease-in rounded-md '
+                    className='bg-blue-100 flex items-center  hover:text-white   hover:bg-blue-400 mx-2 text-blue-600 w-auto transition ease-in rounded-md '
                     onClick={() => {
                       setSelectedInvoiceId(row._id);
                       setOpenFetchDialog(true);
                     }}
                   >
-                    <FontAwesomeIcon icon={faEye} fontSize={20} className='cursor-pointer  px-2' /> Consulter
+                    <FontAwesomeIcon icon={faEye} fontSize={20} className='cursor-pointer  px-2' />
                   </button>
-                  <div className='flex items-center'>
-                    <Link to={"/createPaymentLink"} className='flex items-center bg-blue-100 hover:text-white hover:bg-blue-400 text-blue-600 w-auto transition ease-in rounded-md mx-2 p-3'>
-                      <FontAwesomeIcon icon={faPlus} fontSize={20} className='cursor-pointer' />
-                      <span className='ml-1'>Créer un lien</span>
-                    </Link>
-                  </div>
+                  <Link className='bg-blue-100 flex items-center  hover:text-white   hover:bg-blue-400  text-blue-600 w-auto transition ease-in px-4 rounded-md' to={`/editInvoice/${row._id}`} >
+                    <FontAwesomeIcon fontSize={20} className='cursor-pointer  px-2' icon={faPenToSquare} />
+                  </Link>
+                  {row.payment_link_params ? (
+                    <div className='flex items-center'>
+                      <Link className='bg-blue-100 p-3 mx-2 hover:text-white hover:bg-blue-600 text-blue-600 w-auto transition ease-in flex items-center rounded-md' to={`/getPaymentLinkDetails/${row._id}`}>
+                        <FontAwesomeIcon icon={faChartLine} fontSize={20} />
+                        <span className='mx-2'>Consulté le lien</span>
+                      </Link>
+                    </div>
+                  ) :
+
+                    <div className='flex items-center'>
+                      <Link to={`/createPaymentLink/${row._id}`} className='flex items-center bg-blue-100 hover:text-white hover:bg-blue-400 text-blue-600 w-auto transition ease-in rounded-md mx-2 p-3'>
+                        <FontAwesomeIcon icon={faPlus} fontSize={20} className='cursor-pointer' />
+                        <span className='ml-1'>Créer un lien</span>
+                      </Link>
+                    </div>}
+
 
 
                 </div>

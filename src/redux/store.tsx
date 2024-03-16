@@ -1,20 +1,14 @@
-// store.ts
-
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import authReducer from './features/auth';
-
-// Define the root state type
-export type RootState = ReturnType<typeof rootReducer>;
-
-// Combine all reducers into a single root reducer
-const rootReducer = combineReducers({
-    auth: authReducer,
-    // Add other reducers here if you have any
-});
-
-// Create the Redux store
+import { Action, ThunkAction, configureStore } from '@reduxjs/toolkit';
+import invoiceReducer from "./features/invoices"
+import paymentLinksSlice from "./features/paymentLinks"
 const store = configureStore({
-    reducer: rootReducer,
+    reducer: {
+        invoices: invoiceReducer,
+        paymentLinks: paymentLinksSlice
+    },
 });
 
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+export type AppThunk = ThunkAction<void, RootState, unknown, Action>;
 export default store;

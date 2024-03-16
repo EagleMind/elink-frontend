@@ -1,140 +1,78 @@
 import React, { useEffect, useState } from 'react';
-import { Line, Doughnut } from 'react-chartjs-2';
-import {
-    Chart as ChartJS,
-    CategoryScale, ArcElement,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-} from 'chart.js';
-import { useParams } from 'react-router-dom';
-import { PaymentLinksService } from '../../services/paymentLinkService';
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement, ArcElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend
-);
-interface Item {
-    description: string;
-    price: number;
-    _id: string;
+import axios from 'axios';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Line } from 'react-chartjs-2';
+import { StatsService } from '../../services/stats';
+
+interface ClickData {
+    label: string;
+    data: number[];
+    fill: boolean;
+    borderColor: string;
+    tension: number;
 }
 
-interface PerformanceMetrics {
-    nb_clicks: number;
-    conversion_rate: number;
-    time_of_clicks: any[]; // You may want to specify the type of this array
-    abandonment_rate: number;
-    average_payment_amount: number;
-    userLocation: any[]; // You may want to specify the type of this array
-}
-
-interface ReusablePaymentLink {
-    performance_metrics: PerformanceMetrics;
-    _id: string;
-    invoice_id: string;
-    link_type: string;
-    url: string;
-    created_at: string;
-    __v: number;
-}
-
-interface Invoice {
-    _id: string;
-    user_id: string;
-    invoice_number: string;
-    invoice_name: string;
-    client_name: string;
-    vendor_name: string;
-    status: string;
-    created_at: string;
-    delivery_date: string;
-    due_date: string;
-    items: Item[];
-    total: number;
-    __v: number;
-    reusable_payment_link: ReusablePaymentLink;
-}
-
-const PaymentLinkDashboard: React.FC = () => {
-    const { paymentlinkId } = useParams()
-    const [stats, setStats] = useState({
-        labels: [],
-        datasets: [
-            {
-                label: [],
-                data: [],
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }
-        ]
-    });
-
-    const getPaymentLinkDetails = async (paymentlinkId: string) => {
+const LivePerformanceView: React.FC = () => {
+    const [invoiceData, setInvoiceData] = useState<any[]>([]);
+    const [paymentLinkData, setPaymentLinkData] = useState<any[]>([]);
+    const fetchData = async () => {
         try {
-            const response = await PaymentLinksService.getById(paymentlinkId);
-            // Process the data to extract labels and dataset values
-            const labels = [
-                "2024-03-01",
-                "2024-03-02",
-                "2024-03-03",
-                "2024-03-04",
-                "2024-03-05",
-                "2024-03-06",
-                "2024-03-07",
-                "2024-03-08",
-                "2024-03-09"]
-            const clicksData = response.reusable_payment_link.performance_metrics.nb_clicks
-
-            // setStats({
-            //     labels: labels,
-            //     datasets: [
-            //         {
-            //             label: 'Number of Clicks',
-            //             data: clicksData,
-            //             fill: false,
-            //             borderColor: 'rgb(75, 192, 192)',
-            //             tension: 0.1
-            //         },
-            //         {
-            //             label: 'Conversion Rate',
-            //             data: conversionRates.map(rate => rate.rate),
-            //             fill: false,
-            //             borderColor: 'rgb(75, 192, 192)',
-            //             tension: 0.1
-            //         }
-            //     ],
-
-            // });
+            const response = await StatsService.getAll()
+            const { invoices, paymentLinks } = response;
+            console.log("response", response)
+            console.log("invoices", invoices)
+            console.log("paymentLinks", paymentLinks)
+            setInvoiceData(invoices);
+            setPaymentLinkData(paymentLinks);
         } catch (error) {
-            console.error('Error fetching invoices:', error);
+            console.error('Error fetching data:', error);
         }
     };
     useEffect(() => {
-        getPaymentLinkDetails(paymentlinkId)
 
-    }, [])
+        fetchData();
+    }, []);
 
+    console.log('Invoices:', invoiceData);
+    console.log('Payment Links:', paymentLinkData);
 
+    // Data processing for invoices per user chart
+    const invoicesPerUser: { [key: string]: number } = {};
+    invoiceData.forEach((invoice: any) => {
+        const userName = invoice.invoice_name; // Assuming client_name is the user name
+        invoicesPerUser[userName] = invoicesPerUser[userName] ? invoicesPerUser[userName] + 1 : 1;
+    });
+
+    // Data processing for payment link clicks chart
+    const clickData: ClickData[] = paymentLinkData.map((link: any) => {
+        return {
+            label: link.name,
+            data: link.performance_metrics.nb_clicks.map((click: any) => click.click),
+            fill: false,
+            borderColor: 'rgba(75,192,192,1)',
+            tension: 0.1,
+        };
+    });
+
+    console.log("invoicesPerUser", invoicesPerUser)
+    console.log("clickData", clickData)
+    // Register chart elements for Chart.js
+    ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
     return (
-        <div className="p-4">
-            <h2 className="text-xl font-semibold mb-4">Payment Link Dashboard</h2>
-            {/* {chartData ? (
-                <Line data={chartData}></Line>
-            ) : (
-                <div>Loading...</div>
-            )} */}
+        <div>
+            <h2>Charts</h2>
+            <div>
+                <h3>Invoices per User</h3>
+                <Line data={{ labels: Object.keys(invoicesPerUser), datasets: [{ data: Object.values(invoicesPerUser) }] }} />
+            </div>
+            <div>
+                <h3>Payment Link Clicks</h3>
+                <Line data={{ labels: paymentLinkData.map((link: any) => link.name), datasets: clickData }} />
+            </div>
+
         </div>
     );
 };
 
-export default PaymentLinkDashboard;
+export default LivePerformanceView;

@@ -17,9 +17,9 @@ export const PaymentLinksService = {
     },
 
     // Get all payment links
-    getAll: async () => {
+    getAll: async (pageSize: number, page: number, searchTerm: string) => {
         try {
-            const response = await axiosInstance.get(PAYMENTLINKS_BASE_URL);
+            const response = await axiosInstance.get(`${PAYMENTLINKS_BASE_URL}/?pageSize=${pageSize}&page=${page}&searchTerm=${searchTerm}`);
             return response.data;
         } catch (error) {
             throw error;
@@ -37,9 +37,9 @@ export const PaymentLinksService = {
     },
 
     // Update payment link by ID
-    linkStatusById: async (id: string, isExpired: boolean) => {
+    linkStatusById: async (id: string, invoiceId: string, isExpired: boolean) => {
         try {
-            const response = await axiosInstance.put(`${PAYMENTLINKS_BASE_URL}/status/${id}`, { isExpired: isExpired });
+            const response = await axiosInstance.put(`${PAYMENTLINKS_BASE_URL}/status/${id}`, { isExpired: isExpired, invoiceId: invoiceId });
             return response.data;
         } catch (error) {
             throw error;
@@ -59,6 +59,15 @@ export const PaymentLinksService = {
     deleteById: async (id: string) => {
         try {
             const response = await axiosInstance.delete(`${PAYMENTLINKS_BASE_URL}/${id}`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+    // Delete  payment link by ID
+    createLinkPayment: async (data: any) => {
+        try {
+            const response = await axiosInstance.post(`${PAYMENTLINKS_BASE_URL}`, data);
             return response.data;
         } catch (error) {
             throw error;

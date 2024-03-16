@@ -3,8 +3,10 @@ import PDFInvoice from './pdfInvoiceTemplates/defaultInvoiceTemplate';
 import { PDFViewer } from '@react-pdf/renderer';
 import { InvoiceService } from '../../services/invoices';
 import moment from "moment"
-import { useParams } from 'react-router-dom';
-
+import { Link, useParams } from 'react-router-dom';
+import { Dialog, Transition } from '@headlessui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 
 interface Item {
     description: string;
@@ -24,7 +26,10 @@ export interface InvoiceDetailsState {
 function CreateAndEditInvoice() {
     let { invoiceId } = useParams();
     const [total, setTotal] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(false);
     const [items, setItems] = useState<Item[]>([]);
+    const [invoiceResponse, setInvoiceResponse] = useState<any>();
+    const [openFetchDialog, setOpenFetchDialog] = useState(false);
     const [invoiceDetails, setInvoiceDetails] = useState<InvoiceDetailsState>({
         vendor_name: "",
         client_name: "",
@@ -61,7 +66,7 @@ function CreateAndEditInvoice() {
             // Then update the invoice details state
             setInvoiceDetails(prevState => ({
                 ...prevState,
-                items: updatedItems // Use the updatedItems here
+                items: updatedItems
             }));
             setNewItemName('');
             setNewItemPrice('');
@@ -86,12 +91,16 @@ function CreateAndEditInvoice() {
     };
 
     const handleCreateInvoice = async () => {
-
+        setLoading(true)
+        setOpenFetchDialog(true);
         try {
-            await InvoiceService.create(invoiceDetails);
-            alert("invoice created")
+            const invoice = await InvoiceService.create(invoiceDetails);
+            setInvoiceResponse(invoice)
+            console.log(invoice)
+            setLoading(false)
         } catch (error) {
-            alert(error.response.data.error)
+            setLoading(false)
+
         }
     };
     const getInvoiceDetails = async (invoiceId: string) => {
@@ -406,6 +415,65 @@ function CreateAndEditInvoice() {
                     </PDFViewer>
                 </div>
             </div>
+            {/* Fetch Dialog */}
+            <Transition.Root show={openFetchDialog} as={Fragment}>
+                <Dialog as="div" className="relative z-10 " onClose={setOpenFetchDialog}>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <div className="fixed inset-0 bg-black/25" />
+                    </Transition.Child>
+
+                    <div className="fixed inset-0 overflow-y-auto ">
+                        <div className="flex min-h-full items-center justify-center p-4 text-center">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95"
+                                enterTo="opacity-100 scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100"
+                                leaveTo="opacity-0 scale-95"
+                            >
+                                <Dialog.Panel className="w-1/2 transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                    {loading || !invoiceDetails ? ( // Show pulse animation while loading
+                                        <div className="animate-pulse bg-gray-200 text-gray-400 rounded-lg p-10 m-5">Loading...</div>
+                                    ) : (
+                                        <div>
+                                            <div className="sm:flex sm:items-start">
+                                                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                    <FontAwesomeIcon icon={faCircleCheck} className="h-6 w-6 text-green-600" aria-hidden="true" />
+                                                </div>
+                                                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+                                                        Votre facture a été crée
+                                                    </Dialog.Title>
+                                                    <div className="mt-2">
+                                                        <p className="text-md text-gray-500">
+                                                            Voulez vous crée un lien pour cette facture?
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className='flex space-x-5 py-5  '>
+                                                <Link to={`/createPaymentLink/${invoiceResponse?.invoice}`} className='border text-sm p-3 rounded-md hover:text-blue-600 border-blue-200 bg-transparent hover:bg-gray-100 text-blue-600 transition  ease-in' >Créer un lien</Link>
+                                            </div>
+                                        </div>
+
+                                    )}
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition.Root>
         </Fragment>
     )
 }

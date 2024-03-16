@@ -5,6 +5,7 @@ import PaymentLinksContainer from "../layout/containers/paymentLinks"
 import ViewInvoicesContainer from "../layout/containers/invoices/viewInvoices"
 import CreateAndEditInvoice from "../views/Invoices/createInvoice"
 import PaymentLinkDashboard from "../views/paymentLinks/linkPerformanceView"
+import LivePerformanceView from "../views/paymentLinks/linkPerformanceView"
 
 export const AUTH_ROUTES = [
   {
@@ -45,8 +46,13 @@ export const MAIN_ROUTES = [
     title: 'Liens de paiments'
   },
   {
+    path: '/createPaymentLink/:id',
+    component: <PaymentLinksContainer />,
+    title: 'Crée un lien de paiments'
+  },
+  {
     path: '/getPaymentLinkDetails/:paymentlinkId',
-    component: <PaymentLinkDashboard />,
+    component: <LivePerformanceView />,
     title: 'Liens de paiments'
   },
 ]
