@@ -25,7 +25,7 @@ export default function PaymentLinksContainer() {
                     <input
                         type="text"
                         className="p-16 bg-white focus:outline-none focus:shadow-outline border border-blue-300 rounded-md py-2 px-2 block appearance-none leading-normal"
-                        placeholder="Search..."
+                        placeholder="chercher par nom"
                         value={searchTerm}
                         onChange={handleSearch} />
 

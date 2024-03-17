@@ -2,7 +2,7 @@ import { faFileCirclePlus, faFileLines, faHouse, faLink } from '@fortawesome/fre
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import logo from '../../public/assets/logo.png'; // Adjust the path as per your project structure
+import logo from '../../public/assets/logo.png';
 
 interface Route {
     path: string;

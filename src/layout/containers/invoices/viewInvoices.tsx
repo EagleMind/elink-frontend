@@ -28,7 +28,7 @@ export default function ViewInvoicesContainer({ }) {
                     <input
                         type="text"
                         className="p-16 bg-white focus:outline-none focus:shadow-outline border border-blue-300 rounded-md py-2 px-2 block appearance-none leading-normal"
-                        placeholder="Search..."
+                        placeholder="Chercher par attribue"
                         value={searchTerm}
                         onChange={handleSearch} />
                     <Link to={"/createInvoice"} className="bg-blue-100 p-3 hover:text-white hover:bg-blue-400 text-blue-600 w-auto transition ease-in  rounded-md">Créer une facture</Link>
@@ -47,10 +47,8 @@ export default function ViewInvoicesContainer({ }) {
     };
     return (
         <Fragment>
-            <div className='flex justify-between items-center'>
-                {renderComponent()}
+            {renderComponent()}
 
-            </div>
 
 
         </Fragment>

@@ -77,7 +77,7 @@ const DynamicTable: React.FC<TableProps> = ({ columnMapping }) => {
               <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{row.status}</td>
               <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{moment(row.delivery_date).format('YYYY-MM-DD')}</td>
               <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{moment(row.due_date).format('YYYY-MM-DD')}</td>
-              <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black  invisible group-hover:visible">
+              <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black  ">
                 <div className='flex justify-center'>
 
                   <button
@@ -225,7 +225,7 @@ const DynamicTable: React.FC<TableProps> = ({ columnMapping }) => {
               >
                 <Dialog.Panel className="w-1/2 transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   {loading || !invoiceDetails ? ( // Show pulse animation while loading
-                    <div className="animate-pulse bg-gray-200 text-gray-400 rounded-lg p-10 m-5">Loading...</div>
+                    <div className="animate-pulse  text-gray-400 rounded-lg p-10 m-5">Loading...</div>
                   ) : (
                     <div className='flex flex-col w-full'>
                       <div className="p-5 space-y-20 overflow-y-auto w-full scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-corner-rounded-full scrollbar scrollbar-thumb-slate-200 scrollbar-track-slate-300">

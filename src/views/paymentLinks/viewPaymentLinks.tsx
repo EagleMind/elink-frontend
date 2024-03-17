@@ -4,8 +4,6 @@ import BottomNav from '../../components/common/bottomNav';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
 import { fetchPaymentLinks, setPage, setPageSize } from '../../redux/features/paymentLinks';
-import { setSearchTerm } from '../../redux/features/invoices';
-
 export default function ViewPaymentLinks() {
     const dispatch = useAppDispatch();
 
@@ -34,7 +32,7 @@ export default function ViewPaymentLinks() {
                 <Fragment>
 
                     {paymentLinks.length != 0 ? (
-                        <DynamicTable data={paymentLinks} columnMapping={["Nom de facture", "Réference de Facture", "Date de creation", "Date d'éxpiration", "Actions"]} ></DynamicTable>
+                        <DynamicTable data={paymentLinks} columnMapping={["Nom/tag de Lien", "Réference de Facture", "Date de creation", "Date d'éxpiration", "Actions"]} ></DynamicTable>
                     ) : (
                         <div className='bg-gray-50 text-gray-400 rounded-lg p-10 m-5 '>Vous n'avais aucun lien de paiment pour le moment.</div>
                     )}
