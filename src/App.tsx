@@ -10,7 +10,7 @@ import Home from './views/home'
 import Layout from './layout'
 import InvoiceForm from './views/Invoices/createInvoice'
 import ViewInvoices from './views/Invoices/viewInvoices'
-import { AUTH_ROUTES, MAIN_ROUTES } from './routes'
+import { AUTH_ROUTES, CHECKOUT_ROUTES, MAIN_ROUTES } from './routes'
 
 function App() {
   return (
@@ -28,9 +28,17 @@ function App() {
                 element={route.component}
               />
             ))}
-          </Route></Route>
+          </Route>
+        </Route>
 
         {AUTH_ROUTES.map((route, index) => (
+          <Route
+            key={index}
+            path={route.path}
+            element={route.component}
+          />
+        ))}
+        {CHECKOUT_ROUTES.map((route, index) => (
           <Route
             key={index}
             path={route.path}

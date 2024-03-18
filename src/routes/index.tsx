@@ -3,6 +3,7 @@ import LoginPage from "../views/Auth/login"
 import Home from "../views/home"
 import PaymentLinksContainer from "../layout/containers/paymentLinks"
 import ViewInvoicesContainer from "../layout/containers/invoices/viewInvoices"
+import CheckoutViewContainer from "../layout/containers/paymentGateway/index"
 import CreateAndEditInvoice from "../views/Invoices/createInvoice"
 import LivePerformanceView from "../views/paymentLinks/linkPerformanceView"
 import ExceptionList from "../views/errorLog"
@@ -14,6 +15,14 @@ export const AUTH_ROUTES = [
   {
     path: '/Registration',
     component: <RegistrationPage />
+  },
+
+]
+export const CHECKOUT_ROUTES = [
+  {
+    path: '/payment/pay/',
+    component: <CheckoutViewContainer />,
+    title: 'Checkout'
   },
 
 ]
