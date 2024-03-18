@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect } from 'react';
 import DynamicTable from './table/index';
 import BottomNav from '../../components/common/bottomNav';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
@@ -19,14 +19,15 @@ export default function ViewPaymentLinks() {
     };
 
     useEffect(() => {
-        dispatch(fetchPaymentLinks(page, pageSize, searchTerm)); // Dispatch the action with current searchTerm
+        dispatch(fetchPaymentLinks(page, pageSize, searchTerm));
     }, [searchTerm, dispatch]);
-    const totalPages = Math.ceil(paymentLinkCount);
+
+    const totalPages = Math.ceil(paymentLinkCount / pageSize);
 
     return (
         <Fragment >
 
-            {!paymentLinks || loading ? ( // Show pulse animation while loading
+            {!paymentLinks || loading ? (
                 <div className="animate-pulse bg-gray-200 text-gray-400 rounded-lg p-10 m-5">Loading...</div>
             ) : (
                 <Fragment>

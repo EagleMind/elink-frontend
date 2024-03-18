@@ -16,8 +16,6 @@ export default function ViewInvoices() {
         dispatch(setPage(pageNumber));
     };
 
-
-
     const totalPages = Math.ceil(invoicesCount / pageSize);
 
     return (

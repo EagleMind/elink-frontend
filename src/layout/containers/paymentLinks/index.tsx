@@ -30,7 +30,8 @@ export default function PaymentLinksContainer() {
                         onChange={handleSearch} />
 
                 </div>
-                <hr></hr><ViewPaymentLinks />
+                <hr></hr>
+                <ViewPaymentLinks />
             </div>
 
 
