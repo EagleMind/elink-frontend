@@ -66,19 +66,19 @@ const DynamicTable: React.FC<TableProps> = ({ columnMapping }) => {
         <tbody >
           {invoices.map((row) => (
             <tr key={row._id} className='group' >
-              <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{row.invoice_name}</td>
-              <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{row.invoice_number}</td>
+              <td className="text-left p-2 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{row.invoice_name}</td>
+              <td className="text-left p-2 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{row.invoice_number}</td>
 
-              <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">
+              <td className="text-left p-2 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">
                 {row.payment_link_params ? (
                   row.payment_link_params.link_type) : <span>Pas de lien</span>}
               </td>
 
-              <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{row.status}</td>
-              <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{moment(row.delivery_date).format('YYYY-MM-DD')}</td>
-              <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{moment(row.due_date).format('YYYY-MM-DD')}</td>
-              <td className="text-left p-6 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black  ">
-                <div className='flex justify-center'>
+              <td className="text-left p-2 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{row.status}</td>
+              <td className="text-left p-2 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{moment(row.delivery_date).format('YYYY-MM-DD')}</td>
+              <td className="text-left p-2 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black">{moment(row.due_date).format('YYYY-MM-DD')}</td>
+              <td className="text-left p-2 border-b border-grey3 bg-white text-sm w-fit group-hover:bg-gray-100 group-hover:text-black  ">
+                <div className='flex justify-left'>
 
                   <button
                     className='bg-blue-100 flex items-center  hover:text-white   hover:bg-blue-400  text-blue-600 w-auto transition ease-in rounded-md mx-2'
@@ -157,7 +157,7 @@ const DynamicTable: React.FC<TableProps> = ({ columnMapping }) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="bg-white px-4 pt-5 pb-4 sm:p-2 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                       <FontAwesomeIcon icon={faTrash} className="h-6 w-6 text-red-600" aria-hidden="true" />
@@ -223,7 +223,7 @@ const DynamicTable: React.FC<TableProps> = ({ columnMapping }) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-1/2 transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-1/2 transform overflow-hidden rounded-2xl bg-white p-2 text-left align-middle shadow-xl transition-all">
                   {loading || !invoiceDetails ? ( // Show pulse animation while loading
                     <div className="animate-pulse  text-gray-400 rounded-lg p-10 m-5">Loading...</div>
                   ) : (

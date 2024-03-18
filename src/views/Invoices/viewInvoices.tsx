@@ -1,13 +1,13 @@
 import { Fragment, useEffect, useState } from 'react';
 import DynamicTable from './table/index';
 import BottomNav from '../../components/common/bottomNav';
-import { fetchInvoices, setPage, setPageSize, setSearchTerm } from '../../redux/features/invoices';
+import { setPage, setPageSize } from '../../redux/features/invoices';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
 
 export default function ViewInvoices() {
     const dispatch = useAppDispatch();
-    const { pageSize, page, invoices, invoicesCount, searchTerm, loading } = useAppSelector((state: RootState) => state.invoices);
+    const { pageSize, page, invoices, invoicesCount, loading } = useAppSelector((state: RootState) => state.invoices);
     const handlePageSizeChange = (size: number) => {
         dispatch(setPageSize(size));
     };
@@ -17,11 +17,8 @@ export default function ViewInvoices() {
     };
 
 
-    useEffect(() => {
-        dispatch(fetchInvoices(page, pageSize, searchTerm));
-    }, [dispatch]);
 
-    const totalPages = Math.ceil(invoicesCount);
+    const totalPages = Math.ceil(invoicesCount / pageSize);
 
     return (
         <Fragment >

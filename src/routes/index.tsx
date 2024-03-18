@@ -4,9 +4,8 @@ import Home from "../views/home"
 import PaymentLinksContainer from "../layout/containers/paymentLinks"
 import ViewInvoicesContainer from "../layout/containers/invoices/viewInvoices"
 import CreateAndEditInvoice from "../views/Invoices/createInvoice"
-import PaymentLinkDashboard from "../views/paymentLinks/linkPerformanceView"
 import LivePerformanceView from "../views/paymentLinks/linkPerformanceView"
-
+import ExceptionList from "../views/errorLog"
 export const AUTH_ROUTES = [
   {
     path: '/login',
@@ -54,5 +53,10 @@ export const MAIN_ROUTES = [
     path: '/getPaymentLinkDetails/:paymentlinkId',
     component: <LivePerformanceView />,
     title: 'Liens de paiments'
+  },
+  {
+    path: '/errorLog/',
+    component: <ExceptionList />,
+    title: 'Error Reporting'
   },
 ]

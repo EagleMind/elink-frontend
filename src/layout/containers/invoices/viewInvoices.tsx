@@ -17,8 +17,8 @@ export default function ViewInvoicesContainer({ }) {
         dispatch(setSearchTerm(term));
     };
     useEffect(() => {
-        dispatch(fetchInvoices(pageSize, page, searchTerm));
-    }, [dispatch, searchTerm]);
+        dispatch(fetchInvoices(page, pageSize, searchTerm));
+    }, [dispatch, searchTerm, page, pageSize]);
 
 
     const renderComponent = () => {
@@ -48,9 +48,6 @@ export default function ViewInvoicesContainer({ }) {
     return (
         <Fragment>
             {renderComponent()}
-
-
-
         </Fragment>
     )
 }

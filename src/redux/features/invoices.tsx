@@ -69,7 +69,7 @@ export const fetchInvoices = (page: number, pageSize: number, searchTerm?: strin
 
     try {
         dispatch(fetchInvoicesRequest());
-        const response = await InvoiceService.getAll(page, pageSize, searchTerm || ''); // Pass searchTerm to the backend
+        const response = await InvoiceService.getAll(pageSize, page, searchTerm || ''); // Pass searchTerm to the backend
         dispatch(fetchInvoicesSuccess({ invoices: response.invoices, invoicesCount: response.invoicesCount }));
     } catch (error: any) {
         dispatch(fetchInvoicesFailure(error.message));
