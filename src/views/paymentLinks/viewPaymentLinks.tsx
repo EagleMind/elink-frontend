@@ -1,13 +1,16 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import DynamicTable from './table/index';
 import BottomNav from '../../components/common/bottomNav';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { RootState } from '../../redux/store';
-import { fetchPaymentLinks, setPage, setPageSize } from '../../redux/features/paymentLinks';
+import { setPage, setPageSize } from '../../redux/features/paymentLinks';
+
 export default function ViewPaymentLinks() {
+
+
     const dispatch = useAppDispatch();
 
-    const { paymentLinks, paymentLinkCount, pageSize, page, searchTerm, loading } = useAppSelector((state: RootState) => state.paymentLinks);
+    const { paymentLinks, paymentLinkCount, pageSize, page, loading } = useAppSelector((state: RootState) => state.paymentLinks);
 
 
     const handlePageSizeChange = (size: number) => {
@@ -19,8 +22,8 @@ export default function ViewPaymentLinks() {
     };
 
     useEffect(() => {
-        dispatch(fetchPaymentLinks(page, pageSize, searchTerm));
-    }, [searchTerm, dispatch]);
+
+    }, [dispatch]);
 
     const totalPages = Math.ceil(paymentLinkCount / pageSize);
 

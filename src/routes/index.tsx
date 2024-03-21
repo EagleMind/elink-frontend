@@ -1,12 +1,13 @@
 import RegistrationPage from "../views/Auth/register"
 import LoginPage from "../views/Auth/login"
-import Home from "../views/home"
 import PaymentLinksContainer from "../layout/containers/paymentLinks"
 import ViewInvoicesContainer from "../layout/containers/invoices/viewInvoices"
 import CheckoutViewContainer from "../layout/containers/paymentGateway/index"
 import CreateAndEditInvoice from "../views/Invoices/createInvoice"
 import LivePerformanceView from "../views/paymentLinks/linkPerformanceView"
 import ExceptionList from "../views/errorLog"
+import DashboardContainer from "../layout/containers/dashboard"
+import Profile from "../views/profile"
 export const AUTH_ROUTES = [
   {
     path: '/login',
@@ -30,7 +31,7 @@ export const CHECKOUT_ROUTES = [
 export const MAIN_ROUTES = [
   {
     path: '/',
-    component: <Home />,
+    component: <DashboardContainer />,
     title: 'Statistiques générale'
   },
   {
@@ -62,6 +63,11 @@ export const MAIN_ROUTES = [
     path: '/getPaymentLinkDetails/:paymentlinkId',
     component: <LivePerformanceView />,
     title: 'Liens de paiments'
+  },
+  {
+    path: '/profile',
+    component: <Profile />,
+    title: 'Profile'
   },
   {
     path: '/errorLog/',

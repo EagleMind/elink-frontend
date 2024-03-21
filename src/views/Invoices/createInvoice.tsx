@@ -6,7 +6,7 @@ import moment from "moment"
 import { Link, useParams } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCircleCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 interface Item {
     description: string;
@@ -28,6 +28,7 @@ function CreateAndEditInvoice() {
     const [total, setTotal] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
     const [items, setItems] = useState<Item[]>([]);
+    const [errorDialog, setErrorDialog] = useState(false);
     const [invoiceResponse, setInvoiceResponse] = useState<any>();
     const [openFetchDialog, setOpenFetchDialog] = useState(false);
     const [invoiceDetails, setInvoiceDetails] = useState<InvoiceDetailsState>({
@@ -92,13 +93,14 @@ function CreateAndEditInvoice() {
 
     const handleCreateInvoice = async () => {
         setLoading(true)
-        setOpenFetchDialog(true);
         try {
-            const invoice = await InvoiceService.create(invoiceDetails);
-            setInvoiceResponse(invoice)
-            console.log(invoice)
+            await InvoiceService.create(invoiceDetails).then(res => {
+                setInvoiceResponse(res)
+                setOpenFetchDialog(true);
+            })
             setLoading(false)
         } catch (error) {
+            setErrorDialog(true)
             setLoading(false)
 
         }
@@ -468,6 +470,65 @@ function CreateAndEditInvoice() {
                                         </div>
 
                                     )}
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition.Root>
+
+            {/* Errpr Dialog */}
+            <Transition.Root show={errorDialog} as={Fragment}>
+                <Dialog as="div" className="relative z-10 " onClose={setErrorDialog}>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <div className="fixed inset-0 bg-black/25" />
+                    </Transition.Child>
+
+                    <div className="fixed inset-0 overflow-y-auto ">
+                        <div className="flex min-h-full items-center justify-center p-4 text-center">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95"
+                                enterTo="opacity-100 scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100"
+                                leaveTo="opacity-0 scale-95"
+                            >
+                                <Dialog.Panel className="w-1/2 transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+
+                                    <div>
+                                        <div className="sm:flex sm:items-start">
+                                            <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                <FontAwesomeIcon icon={faXmark} className="h-6 w-6 text-red-600" aria-hidden="true" />
+                                            </div>
+                                            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                                <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+                                                    Error
+                                                </Dialog.Title>
+                                                <div className="mt-2">
+                                                    <p className="text-md text-gray-500">
+                                                        Une erreur est survenue l'or de la creation de la facture, cet erreur nous a été transmis automatiquement pour investiger le problem, merci pour votre patience!
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className='flex space-x-5 py-5  '>
+                                            <button onClick={() => setErrorDialog(false)} className='items-center flex bg-blue-100 hover:bg-blue-400 text-blue-600 hover:text-white justify-center transition ease-in p-3'>
+                                                Fermer
+                                            </button>
+                                        </div>
+                                    </div>
+
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>

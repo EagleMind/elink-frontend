@@ -1,10 +1,12 @@
 import { Action, ThunkAction, configureStore } from '@reduxjs/toolkit';
 import invoiceReducer from "./features/invoices"
 import paymentLinksSlice from "./features/paymentLinks"
+import dashboard from './features/dashboard';
 const store = configureStore({
     reducer: {
         invoices: invoiceReducer,
-        paymentLinks: paymentLinksSlice
+        paymentLinks: paymentLinksSlice,
+        dashboard: dashboard
     },
 });
 

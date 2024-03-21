@@ -15,6 +15,16 @@ export const paymentGatewayService = {
             throw error;
         }
     },
+    // send stats
+    saveVisitorStats: async (performance_metrics: any,
+        invoice_id: string) => {
+        try {
+            const response = await axiosInstance.post(`${PAYMENT_GATEWAY_BASE_URL}/stats`, { performance_metrics, invoice_id });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
 
 
 };

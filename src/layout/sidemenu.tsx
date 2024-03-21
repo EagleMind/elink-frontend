@@ -1,4 +1,4 @@
-import { faFileCirclePlus, faFileLines, faHouse, faLink } from '@fortawesome/free-solid-svg-icons';
+import { faFileCirclePlus, faFileLines, faHouse, faLink, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -17,6 +17,7 @@ const routeIcons: { [key: string]: JSX.Element } = {
     "Factures": <FontAwesomeIcon icon={faFileLines} size='xl' />, // Replace DashboardIcon with your actual icon component for the Dashboard route
     "Créer une facture": <FontAwesomeIcon icon={faFileCirclePlus} size='xl' />, // Replace DashboardIcon with your actual icon component for the Dashboard route
     "Liens de paiments": <FontAwesomeIcon icon={faLink} size='xl' />, // Replace DashboardIcon with your actual icon component for the Dashboard route
+    "Profile": <FontAwesomeIcon icon={faUser} size='xl' />, // Replace DashboardIcon with your actual icon component for the Dashboard route
     // Add more route titles and their corresponding icons here
 };
 const SideMenu: React.FC<SideMenuProps> = ({ routes }) => {

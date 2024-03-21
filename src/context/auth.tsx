@@ -1,75 +1,98 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { AuthData, authService } from '../services/authentication';
-import { jwtDecode } from 'jwt-decode';
-import { PropsWithChildren } from 'react';
 import Cookies from 'js-cookie';
+import jwt_decode, { jwtDecode } from 'jwt-decode';
+import { authService } from '../services/authentication';
 
-// Define the type for the authentication context data
-type AuthContextData = {
-    signUp(email: string, password: string): Promise<void>;
-    signIn(email: string, password: string): Promise<void>;
+interface AuthData {
+    token: string;
+    // Define other properties of AuthData if available
+}
+
+interface AuthContextData {
+    signUp(phone: string, password: string): Promise<void>;
+    signIn(phone: string, password: string): Promise<void>;
     authData?: AuthData;
     loading: boolean;
     signOut(): void;
-};
+}
 
-// Create the Auth Context with the specified data type and an empty object
-const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-const AuthProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => { // Added {} to PropsWithChildren
-    const [authData, setAuthData] = useState<AuthData | undefined>();
+const AuthContext = createContext<AuthContextData>({
+    signUp: async () => { },
+    signIn: async () => { },
+    loading: true,
+    signOut: () => { },
+});
+
+const AuthProvider: React.FC = ({ children }) => {
+    const [authData, setAuthData] = useState<AuthData | undefined>(undefined);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadStorageData();
+        loadCookieData();
     }, []);
 
     function isTokenExpired(expirationTimestamp: number) {
         const expirationDateTime = expirationTimestamp * 1000;
         const currentTimestamp = Date.now();
-
         return expirationDateTime < currentTimestamp;
     }
 
-    async function loadStorageData(): Promise<void> {
+    async function loadCookieData(): Promise<void> {
         try {
-            const token = Cookies.get('TOKEN_KEY');
-
-            if (token) {
-                const jwtDecoded = jwtDecode(token) as { exp: number };
-                const tokenValidationState = isTokenExpired(jwtDecoded.exp);
-
-                if (!tokenValidationState) {
-                    Cookies.remove('TOKEN_KEY');
-                } else {
-                    // Fetch user data or perform any other necessary actions
-                    // Here, you might want to setAuthData with user information
+            const authDataSerialized: string | undefined = Cookies.get('token');
+            if (authDataSerialized) {
+                const jwtDecoded = jwtDecode(authDataSerialized) as { exp: number };
+                const tokenValidationState: boolean = !isTokenExpired(jwtDecoded.exp);
+                if (tokenValidationState) {
+                    setAuthData({ token: authDataSerialized });
                 }
             }
         } catch (error) {
-            console.error('Error loading storage data:', error);
+            console.error('Error loading auth data:', error);
         } finally {
             setLoading(false);
         }
     }
 
-    const signIn = async (email: string, password: string) => {
-        const response = await authService.signIn(email, password);
-        if (response) {
-            // Set expiration time to 24 hours from now
-            const expirationDate = new Date();
-            expirationDate.setTime(expirationDate.getTime() + (24 * 60 * 60 * 1000)); // 24 hours in milliseconds
-            console.log(response)
-            Cookies.set('TOKEN_KEY', response.token, { expires: expirationDate, secure: true, });
+    const storeData = async (value: string) => {
+        try {
+            Cookies.set('token', value, { path: '/' });
+        } catch (error) {
+            console.error('Error saving token:', error);
         }
     };
 
-    const signUp = async (email: string, password: string) => {
-        await authService.Register(email, password);
+    const signIn = async (phone: string, password: string) => {
+        try {
+            // Assume authService.signIn returns AuthData upon successful sign-in
+            const response = await authService.signIn(phone, password);
+            if (response) {
+                storeData(response.token);
+                setAuthData(response);
+            }
+        } catch (error) {
+            console.error('Error signing in:', error);
+        }
     };
 
-    const signOut = () => {
-        Cookies.remove('TOKEN_KEY');
+    const signUp = async (phone: string, password: string) => {
+        try {
+            // Call the authService.Register to sign up user
+            await authService.Register(phone, password);
+            // Proceed with handling sign-up success
+        } catch (error) {
+            console.error('Error signing up:', error);
+        }
+    };
+
+    const signOut = async () => {
+        try {
+            setAuthData(undefined);
+            Cookies.remove('token', { path: '/' });
+        } catch (error) {
+            console.error('Error signing out:', error);
+        }
     };
 
     return (
