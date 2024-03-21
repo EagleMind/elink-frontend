@@ -23,8 +23,10 @@ const AuthContext = createContext<AuthContextData>({
     loading: true,
     signOut: () => { },
 });
-
-const AuthProvider: React.FC = ({ children }) => {
+type Props = {
+    children: React.ReactNode
+}
+const AuthProvider: React.FC<Props> = ({ children }) => {
     const [authData, setAuthData] = useState<AuthData | undefined>(undefined);
     const [loading, setLoading] = useState(true);
 

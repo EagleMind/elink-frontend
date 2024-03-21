@@ -29,6 +29,7 @@ function CreateAndEditInvoice() {
     const [loading, setLoading] = useState<boolean>(false);
     const [items, setItems] = useState<Item[]>([]);
     const [errorDialog, setErrorDialog] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const [invoiceResponse, setInvoiceResponse] = useState<any>();
     const [openFetchDialog, setOpenFetchDialog] = useState(false);
     const [invoiceDetails, setInvoiceDetails] = useState<InvoiceDetailsState>({
@@ -70,7 +71,7 @@ function CreateAndEditInvoice() {
                 items: updatedItems
             }));
             setNewItemName('');
-            setNewItemPrice('');
+            setNewItemPrice(0);
             setTotal(newItemPrice)
         }
     };
@@ -81,7 +82,7 @@ function CreateAndEditInvoice() {
             const updatedItems = [...prevItems];
             // Remove the item at the specified index
             updatedItems.splice(indexToRemove, 1);
-            setTotal(updatedItems.reduce((total: any, item: any) => total + item.price, 0).toFixed(2))
+            setTotal(updatedItems.reduce((total: any, item: any) => total + item.price, 0).toFixed(3))
             // Return the updated items array
             return updatedItems;
         });
@@ -99,8 +100,18 @@ function CreateAndEditInvoice() {
                 setOpenFetchDialog(true);
             })
             setLoading(false)
-        } catch (error) {
+        } catch (error: any) {
             setErrorDialog(true)
+            console.log(error.response.data)
+
+            if (error.response && error.response.data.errors && error.response.data.errors.length > 0) {
+                // Extract error messages and set in state
+                const errorMessages = error.response.data.errors.map((err: any) => err.msg).join("\n");
+                setErrorMessage(errorMessages);
+            } else {
+                // Set a generic error message if no specific error details are available
+                setErrorMessage("An error occurred while creating the invoice. Please try again later.");
+            }
             setLoading(false)
 
         }
@@ -205,7 +216,7 @@ function CreateAndEditInvoice() {
                                 {items.map((item, index) => (
                                     <tr key={index}>
                                         <td className="border-t py-2 text-left">{item.description}</td>
-                                        <td className="border-t text-right py-2">${item.price.toFixed(2)}</td>
+                                        <td className="border-t text-right py-2">${item.price.toFixed(3)}</td>
                                         <td className="border-t py-2 text-right">
                                             <button className='border-blue-300 text-white bg-transparent hover:bg-gray-100 transition  ease-in' onClick={() => handleRemoveItem(index)}>Remove</button>
                                         </td>
@@ -214,7 +225,7 @@ function CreateAndEditInvoice() {
                                 {invoiceId && invoiceDetails.items.map((item, index) => (
                                     <tr key={index}>
                                         <td className="border-t py-2 text-left">{item.description}</td>
-                                        <td className="border-t text-right py-2">${item.price.toFixed(2)}</td>
+                                        <td className="border-t text-right py-2">${item.price.toFixed(3)}</td>
                                         <td className="border-t py-2 text-right">
                                             <button className='border-blue-300 text-white bg-transparent hover:bg-gray-100 transition  ease-in' onClick={() => handleRemoveItem(index)}>Remove</button>
                                         </td>
@@ -350,7 +361,7 @@ function CreateAndEditInvoice() {
                                 {items.map((item, index) => (
                                     <tr key={index}>
                                         <td className="border-t py-2 text-left">{item.description}</td>
-                                        <td className="border-t text-right py-2">${item.price.toFixed(2)}</td>
+                                        <td className="border-t text-right py-2">${item.price.toFixed(3)}</td>
                                         <td className="border-t py-2 text-right">
                                             <button className='border-blue-300 bg-transparent hover:bg-gray-100 transition  ease-in' onClick={() => handleRemoveItem(index)}>Remove</button>
                                         </td>
@@ -359,7 +370,7 @@ function CreateAndEditInvoice() {
                                 {invoiceId && invoiceDetails.items.map((item, index) => (
                                     <tr key={index}>
                                         <td className="border-t py-2 text-left">{item.description}</td>
-                                        <td className="border-t text-right py-2">${item.price.toFixed(2)}</td>
+                                        <td className="border-t text-right py-2">${item.price.toFixed(3)}</td>
                                         <td className="border-t py-2 text-right">
                                             <button className='border-blue-300 bg-transparent hover:bg-gray-100 transition  ease-in' onClick={() => handleRemoveItem(index)}>Remove</button>
                                         </td>
@@ -477,9 +488,9 @@ function CreateAndEditInvoice() {
                 </Dialog>
             </Transition.Root>
 
-            {/* Errpr Dialog */}
+            {/* Error Dialog */}
             <Transition.Root show={errorDialog} as={Fragment}>
-                <Dialog as="div" className="relative z-10 " onClose={setErrorDialog}>
+                <Dialog as="div" className="relative z-10 " onClose={() => setErrorDialog(false)}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -516,7 +527,7 @@ function CreateAndEditInvoice() {
                                                 </Dialog.Title>
                                                 <div className="mt-2">
                                                     <p className="text-md text-gray-500">
-                                                        Une erreur est survenue l'or de la creation de la facture, cet erreur nous a été transmis automatiquement pour investiger le problem, merci pour votre patience!
+                                                        {errorMessage}
                                                     </p>
                                                 </div>
                                             </div>
