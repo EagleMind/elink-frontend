@@ -68,7 +68,7 @@ interface DashboardCardProps {
 const DashboardCard: React.FC<DashboardCardProps> = ({ title, value }) => {
     return (
         <div className="bg-white rounded-lg border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold">{title}</h2>
+            <h2 className="text-md font-semibold">{title}</h2>
             <p className="text-xl mt-2">{value}</p>
         </div>
     );
@@ -86,7 +86,7 @@ interface MostFrequentClientsProps {
 const MostFrequentClients: React.FC<MostFrequentClientsProps> = ({ title, clients }) => {
     return (
         <div className="flex flex-col bg-white rounded-lg border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold">{title}</h2>
+            <h2 className="text-md font-semibold">{title}</h2>
             <ul className="overflow-y-scroll">
                 {clients.map((client, index) => (
                     <li key={index} className="text-xl mt-2" >
@@ -106,7 +106,7 @@ interface StatusDistributionProps {
 const StatusDistribution: React.FC<StatusDistributionProps> = ({ title, distribution }) => {
     return (
         <div className="bg-white rounded-lg border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold">{title}</h2>
+            <h2 className="text-md font-semibold">{title}</h2>
             <ul className="overflow-y-scroll">
                 {distribution.map((status, index) => (
                     <li key={index} className="text-xl mt-2">

@@ -27,7 +27,7 @@ interface RadioButtonProps {
 
 const FormField: React.FC<FormFieldProps> = ({ label, id, type = 'text', value, onChange, name, children }) => (
     <div>
-        <label htmlFor={id} className='block text-md font-semibold text-left text-gray-500 '>
+        <label htmlFor={id} className='block text-sm font-semibold text-left text-gray-500 '>
             {label}
         </label>
         {children ? (
@@ -55,7 +55,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({ id, name, value, checked, onC
     return (
         <label
             htmlFor={id}
-            className={`flex border rounded-lg p-2 cursor-pointer hover:border-2 hover:border-blue-400 w-1/4 ease-in  ${checked ? 'border-2 border-blue-400' : 'border-gray-300'}`}
+            className={`flex shadow-md rounded-lg p-2 cursor-pointer hover:border-2 hover:border-blue-400 w-1/4 ease-in  ${checked ? 'border-2 border-blue-400' : 'border-gray-300'}`}
         >
             <input
                 type='radio'
@@ -66,12 +66,14 @@ const RadioButton: React.FC<RadioButtonProps> = ({ id, name, value, checked, onC
                 onChange={handleInputChange}
                 className='sr-only'
             />
-            <div className='flex flex-col items-start'>
-                <span className='text-md font-bold text-blue-400 cursor-pointer '>
-                    {value === 'single' ? 'Lien simple' : 'Lien permanent'}
+            <div className='flex flex-col items-start py-1'>
+                <span className='text-sm font-bold text-blue-400 cursor-pointer '>
+                    {value === 'single' && 'Lien Simple'}
+                    {value === 'events' && 'Lien Permanent'}
                 </span>
-                <span className='text-sm '>
-                    {value === 'signle' ? 'Description du Lien simple' : 'Description du Lien permanent'}
+                <span className='text-xs text-left py-1'>
+                    {value === 'single' && <p>Ce type de lien propose un lien de paiement utilisable une seule fois favorable pour les freelances</p>}
+                    {value === 'events' && <p>Ce type de lien offre un lien de paiement permanent avec une date d'expiration idéale pour les événements</p>}
                 </span>
             </div>
         </label>
@@ -129,11 +131,11 @@ const CreatePaymentLink: React.FC = () => {
                 <FormField label='Nom/Tag' id='name' type='text' value={paymentLinkDetails.name} onChange={handleInputChange} name='name' />
                 <FormField label='Type du lien' id='link_type'>
                     <RadioButton id='single' name='linkType' value='single' checked={paymentLinkDetails.linkType === 'single'} onChange={handleInputChange} />
-                    <RadioButton id='reusable' name='linkType' value='reusable' checked={paymentLinkDetails.linkType === 'reusable'} onChange={handleInputChange} />
+                    <RadioButton id='events' name='linkType' value='events' checked={paymentLinkDetails.linkType === 'events'} onChange={handleInputChange} />
                 </FormField>
                 <FormField label='Envoyer Via' id='sendViaInput' type='text' value={paymentLinkDetails.sendVia} onChange={handleInputChange} name='sendVia' />
                 <FormField label='Note pour le client' id='vendorNoteInput' type='text' value={paymentLinkDetails.vendorNote} onChange={handleInputChange} name='vendorNote' />
-                <button onClick={createPaymentLink} type='submit' className='flex  px-4 py-2 border border-transparent text-base font-medium rounded-md text-blue-500 hover:text-white shadow-md hover:bg-blue-500 hover:border-none border-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+                <button onClick={createPaymentLink} type='submit' className='flex  px-4 py-2 border border-transparent text-base text-sm font-medium rounded-md text-blue-500 hover:text-white shadow-md hover:bg-blue-500 hover:border-none border-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
                     Create Payment Link
                 </button>
             </div>
@@ -173,11 +175,11 @@ const CreatePaymentLink: React.FC = () => {
                                                     <FontAwesomeIcon icon={faCircleCheck} className="h-6 w-6 text-green-600" aria-hidden="true" />
                                                 </div>
                                                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+                                                    <Dialog.Title as="h3" className="text-md leading-6 font-medium text-gray-900">
                                                         Votre lien a été crée
                                                     </Dialog.Title>
                                                     <div className="mt-2">
-                                                        <p className="text-md text-gray-500">
+                                                        <p className="text-sm text-gray-500">
                                                             Clicker sur le boutton <span className='strong'>Copier</span> pour pouvoir utilisé le lien
                                                         </p>
                                                     </div>
@@ -237,11 +239,11 @@ const CreatePaymentLink: React.FC = () => {
                                                 <FontAwesomeIcon icon={faXmark} className="h-6 w-6 text-red-600" aria-hidden="true" />
                                             </div>
                                             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                                <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+                                                <Dialog.Title as="h3" className="text-md leading-6 font-medium text-gray-900">
                                                     Error
                                                 </Dialog.Title>
                                                 <div className="mt-2">
-                                                    <p className="text-md text-gray-500">
+                                                    <p className="text-sm text-gray-500">
                                                         Une erreur est survenue l'or de la creation du lien, cet erreur nous a été transmis automatiquement pour investiger le problem, merci pour votre patience!
                                                     </p>
                                                 </div>

@@ -27,13 +27,21 @@ interface Invoice {
 import { axiosInstance } from './axios';
 
 // Define the base URL for invoices
-const INVOICES_BASE_URL = '/statistics/invoice-statistics';
+const INVOICES_BASE_URL = '/statistics';
 
 
 export const StatisticsServices = {
     fetchInvoicesStats: async () => {
         try {
-            const response = await axiosInstance.get(INVOICES_BASE_URL);
+            const response = await axiosInstance.get(`${INVOICES_BASE_URL}/invoice-statistics`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+    fetchPaymentLinkStats: async () => {
+        try {
+            const response = await axiosInstance.get(`${INVOICES_BASE_URL}/payment-link-statistics`);
             return response.data;
         } catch (error) {
             throw error;

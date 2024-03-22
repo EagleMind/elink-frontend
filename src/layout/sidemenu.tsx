@@ -2,7 +2,7 @@ import { faFileCirclePlus, faFileLines, faHouse, faLink, faUser } from '@fortawe
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import logo from '../../public/assets/logo.png';
+import logo from '../assets/logo.png';
 
 interface Route {
     path: string;
@@ -38,7 +38,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ routes }) => {
                                 to={route.path}
                                 className={`flex items-center rounded-lg px-3 py-2 text-[14px] my-1 ${location.pathname === route.path
                                     ? 'bg-gray-100 text-blue-500 hover:text-blue-500 dark:bg-gray-800 dark:text-white text-[14px]'
-                                    : 'text-blue-500 hover:text-white hover:bg-blue-500  transition ease-in dark:text-gray-400 dark:hover:text-white text-[14px]'
+                                    : 'text-blue-600 hover:text-white hover:bg-blue-500  transition ease-in dark:text-gray-400 dark:hover:text-white text-[14px]'
                                     }`}
                             >
                                 <div className="flex justify-between items-center space-x-3">

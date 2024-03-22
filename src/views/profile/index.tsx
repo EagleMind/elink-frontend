@@ -16,7 +16,7 @@ const TabComponent: React.FC<TabComponentProps> = ({ tabs }) => {
             className={`${activeTab === index
               ? 'bg-blue-500 text-white'
               : 'bg-gray-200 text-gray-700'
-              } px-4 py-2 mr-2 rounded-t-lg focus:outline-none`}
+              } px-4 py-2 mr-2 rounded-t-lg focus:outline-none text-sm`}
             onClick={() => setActiveTab(index)}
           >
             {tab.name}
@@ -142,8 +142,8 @@ const ProfilePage: React.FC = () => {
         <Fragment>
           <div className="space-y-4 flex justify-start space-x-44">
             <div className='flex flex-col w-1/3'>
-              <div className="flex flex-col space-y-4 my-3">
-                <label className="font-medium text-left">Nom :</label>
+              <div className="flex flex-col space-y-4 my-3 text-sm">
+                <label className="font-medium text-left">Nom </label>
                 <input
                   type="text"
                   value={profile.firstName}
@@ -151,8 +151,8 @@ const ProfilePage: React.FC = () => {
                   className="border border-gray-300 rounded px-3 py-2 w-full"
                 />
               </div>
-              <div className="flex flex-col space-y-4 my-3">
-                <label className="font-medium text-left">Nom d'utilisateur :</label>
+              <div className="flex flex-col space-y-4 my-3 text-sm">
+                <label className="font-medium text-left">Nom d'utilisateur </label>
                 <input
                   type="text"
                   value={profile.lastName}
@@ -160,8 +160,8 @@ const ProfilePage: React.FC = () => {
                   className="border border-gray-300 rounded px-3 py-2 w-full"
                 />
               </div>
-              <div className="flex flex-col space-y-4 my-3">
-                <label className="font-medium text-left">Email :</label>
+              <div className="flex flex-col space-y-4 my-3 text-sm">
+                <label className="font-medium text-left">Email </label>
                 <input
                   type="email"
                   value={profile.email}
@@ -169,8 +169,8 @@ const ProfilePage: React.FC = () => {
                   className="border border-gray-300 rounded px-3 py-2 w-full"
                 />
               </div>
-              <div className="flex flex-col space-y-4 my-3">
-                <label className="font-medium text-left">Mot de passe :</label>
+              <div className="flex flex-col space-y-4 my-3 text-sm">
+                <label className="font-medium text-left">Mot de passe </label>
                 <input
                   type="password"
                   value={profile.password}
@@ -178,8 +178,8 @@ const ProfilePage: React.FC = () => {
                   className="border border-gray-300 rounded px-3 py-2 w-full"
                 />
               </div>
-              <div className="flex flex-col space-y-4 my-3">
-                <label className="font-medium text-left">Confirmer le mot de passe :</label>
+              <div className="flex flex-col space-y-4 my-3 text-sm">
+                <label className="font-medium text-left">Confirmer le mot de passe </label>
                 <input
                   type="password"
                   value={profile.confirmPassword}
@@ -187,8 +187,8 @@ const ProfilePage: React.FC = () => {
                   className="border border-gray-300 rounded px-3 py-2 w-full"
                 />
               </div>
-              <div className="flex flex-col space-y-4 my-3">
-                <label className="font-medium text-left">Votre logo :</label>
+              <div className="flex flex-col space-y-4 my-3 text-sm">
+                <label className="font-medium text-left">Votre logo </label>
                 <input
                   type="file"
                   accept="image/*"
@@ -200,16 +200,16 @@ const ProfilePage: React.FC = () => {
             </div>
 
             <div className="flex flex-col space-y-4 w-1/3">
-              <div className="flex flex-col space-y-4">
-                <label className="font-medium text-left">Bio :</label>
+              <div className="flex flex-col space-y-4 text-sm">
+                <label className="font-medium text-left">Bio </label>
                 <textarea
                   value={profile.bio}
                   onChange={(e) => handleEditProfile('bio', e.target.value)}
                   className="border border-gray-300 rounded px-3 py-2 w-full"
                 />
               </div>
-              <div className="flex flex-col space-y-4">
-                <label className="font-medium text-left">Facebook :</label>
+              <div className="flex flex-col space-y-4 text-sm">
+                <label className="font-medium text-left">Facebook </label>
                 <input
                   type="text"
                   value={profile.social_media_links.facebook}
@@ -217,8 +217,8 @@ const ProfilePage: React.FC = () => {
                   className="border border-gray-300 rounded px-3 py-2 w-full"
                 />
               </div>
-              <div className="flex flex-col space-y-4">
-                <label className="font-medium text-left">Instagram :</label>
+              <div className="flex flex-col space-y-4 text-sm">
+                <label className="font-medium text-left">Instagram </label>
                 <input
                   type="text"
                   value={profile.social_media_links.instagram}
@@ -226,8 +226,8 @@ const ProfilePage: React.FC = () => {
                   className="border border-gray-300 rounded px-3 py-2 w-full"
                 />
               </div>
-              <div className="flex flex-col space-y-4">
-                <label className="font-medium text-left">Tiktok :</label>
+              <div className="flex flex-col space-y-4 text-sm">
+                <label className="font-medium text-left">Tiktok </label>
                 <input
                   type="text"
                   value={profile.social_media_links.tiktok}
@@ -235,8 +235,8 @@ const ProfilePage: React.FC = () => {
                   className="border border-gray-300 rounded px-3 py-2 w-full"
                 />
               </div>
-              <div className="flex flex-col space-y-4">
-                <label className="font-medium text-left">LinkedIn :</label>
+              <div className="flex flex-col space-y-4 text-sm">
+                <label className="font-medium text-left">LinkedIn </label>
                 <input
                   type="text"
                   value={profile.social_media_links.linkedin}
@@ -246,15 +246,18 @@ const ProfilePage: React.FC = () => {
               </div>
             </div>
           </div>
-          <button onClick={handleUpdateProfile} className="px-4  bg-blue-500 text-white rounded hover:bg-blue-600 w-[200px]">Mettre à jour</button>
+          <div className='flex justify-start'>
+            <button onClick={handleUpdateProfile} className="px-4  bg-blue-500 text-white rounded hover:bg-blue-600  text-sm">Mettre à jour</button>
+
+          </div>
         </Fragment>
       )
     },
     {
       name: "Securité du compte", content: (
         <div className='flex flex-col w-1/3'>
-          <div className="flex flex-col space-y-4 my-3">
-            <label className="font-medium text-left">Mot de passe :</label>
+          <div className="flex flex-col space-y-4 my-3 text-sm">
+            <p className="font-medium text-left  text-sm">Mot de passe :</p>
             <input
               type="password"
               value={profile.password}
@@ -262,8 +265,8 @@ const ProfilePage: React.FC = () => {
               className="border border-gray-300 rounded px-3 py-2 w-full"
             />
           </div>
-          <div className="flex flex-col space-y-4 my-3">
-            <label className="font-medium text-left">Confirmer le mot de passe :</label>
+          <div className="flex flex-col space-y-4 my-3 text-sm">
+            <label className="font-medium text-left text-sm">Confirmer le mot de passe </label>
             <input
               type="password"
               value={profile.confirmPassword}
@@ -271,7 +274,7 @@ const ProfilePage: React.FC = () => {
               className="border border-gray-300 rounded px-3 py-2 w-full"
             />
           </div>
-          <button onClick={handleUpdateSecurity} className="px-4  bg-blue-500 text-white rounded hover:bg-blue-600 w-[200px]">Mettre à jour</button>
+          <button onClick={handleUpdateSecurity} className="px-4  bg-blue-500 text-white rounded hover:bg-blue-600  w-1/4 text-sm">Mettre à jour</button>
 
         </div>
       )

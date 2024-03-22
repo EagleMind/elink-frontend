@@ -58,7 +58,7 @@ export default function Modal({ id, feature }: Props) {
             <>
                 <Dialog.Title
                     as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
+                    className="text-md font-medium leading-6 text-gray-900"
                 >
                     Désactivé le lien
                 </Dialog.Title>

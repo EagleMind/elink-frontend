@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../context/auth';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../../../public/assets/logo.png';
+import logo from '../../../assets/logo.png';
 
 interface LoginFormValues {
   email: string;

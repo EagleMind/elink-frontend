@@ -74,7 +74,7 @@ const DynamicTable: React.FC<TableProps> = ({ columnMapping }) => {
               <div className='flex w-full justify-center space-x-4'>
                 <Link className='bg-blue-100 p-3 hover:text-white hover:bg-blue-600 text-blue-600 w-auto transition ease-in flex items-center rounded-md' to={`/getPaymentLinkDetails/${row._id}`}>
                   <FontAwesomeIcon icon={faChartLine} fontSize={20} />
-                  <span className='mx-2'>Consulté</span>
+                  <span className='mx-2 '>Consulté</span>
                 </Link>
                 <button onClick={() => paymentLinkExpirationStatus(row._id, row.invoice_id._id, !row.isExpired)} className='items-center flex bg-blue-100 hover:bg-blue-400 text-blue-600 hover:text-white justify-center transition ease-in p-3'>
                   {!loading && row.isExpired ? (

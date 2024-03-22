@@ -62,7 +62,7 @@ export const MAIN_ROUTES = [
   {
     path: '/getPaymentLinkDetails/:paymentlinkId',
     component: <LivePerformanceView />,
-    title: 'Liens de paiments'
+    title: 'Statistiques du lien'
   },
   {
     path: '/profile',
