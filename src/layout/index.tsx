@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import SideMenu from './sidemenu'
 import { MAIN_ROUTES } from '../routes'
@@ -6,20 +6,26 @@ import { MAIN_ROUTES } from '../routes'
 const Layout: React.FC = () => {
   const location = useLocation();
   return (
-    <div className="flex h-screen w-screen">
-      <SideMenu routes={MAIN_ROUTES}></SideMenu>
-      <div className="flex flex-col w-full">
-        <div className='text-left  p-2 md:gap-8 md:p-6 '>
-          <h1 className=' text-[30px] font-semibold text-gray-600'>{MAIN_ROUTES.map(pathname => { return location.pathname == pathname.path ? pathname.title : null })}</h1>
-        </div>
-        <main className="flex flex-col gap-4 p-4 md:gap-6 md:p-4 ">
-          <div className="border shadow-sm rounded-lg">
-
-            <Outlet />
-          </div>
-        </main>
+    <Fragment>
+      <div className='flex md:hidden'>
+        Version mobile n'est pas encore préte pour raison de priorité
       </div>
-    </div>
+      <div className="hidden md:flex">
+        <SideMenu routes={MAIN_ROUTES}></SideMenu>
+        <div className="flex flex-col w-full bg-blue-100 p-5">
+          <div className='text-left my-2  '>
+            <h1 className=' text-[30px] font-semibold text-gray-600'>{MAIN_ROUTES.map(pathname => { return location.pathname == pathname.path ? pathname.title : null })}</h1>
+          </div>
+          <main className="flex flex-col  bg-blue-100 h-screen ">
+            <div className="border shadow-md ">
+
+              <Outlet />
+            </div>
+          </main>
+        </div>
+      </div>
+    </Fragment>
+
   )
 }
 

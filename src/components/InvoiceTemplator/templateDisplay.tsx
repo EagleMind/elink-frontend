@@ -1,35 +1,29 @@
-// TemplateDisplay.tsx
 import React from 'react';
-import DynaTemplate from './pdfInvoiceTemplates/dynaTemplate';
-import { PDFViewer, Document } from '@react-pdf/renderer';
-import { TemplateOption } from './templateSelector';
-
-
-
+import { PDFViewer } from '@react-pdf/renderer';
+import MyPDF from '../../views/Invoices/pdfInvoiceTemplates/dynaTemplate';
+import { TemplateOptionProps } from './templateSelector';
+import PDFInvoice from '../../views/Invoices/pdfInvoiceTemplates/dynaTemplate';
 
 interface TemplateDisplayProps {
-    config: TemplateOption | null;
-    inputValues: { [key: string]: string };
-    onInputChange: (fieldName: string, value: string) => void;
+    template: TemplateOptionProps | null;
+    data: any;
 }
 
-const TemplateDisplay: React.FC<TemplateDisplayProps> = ({ config, inputValues }) => {
-    const renderTemplate = (templateOption: TemplateOption) => {
-        // Factory function to generate the appropriate template based on the selected option
-        switch (templateOption.name) {
-            case 'Template1':
-                return <DynaTemplate config={{ headerCategory: { category: 'Header', fields: templateOption.fields }, billingCategory: { category: 'Billing', fields: templateOption.fields }, itemsCategory: { category: 'Items', fields: templateOption.fields }, footerCategory: { category: 'Footer', fields: templateOption.fields } }} inputValues={inputValues} />;
-            case 'Template 2':
-                return <DynaTemplate config={{ headerCategory: { category: 'Header', fields: templateOption.fields }, billingCategory: { category: 'Billing', fields: templateOption.fields }, itemsCategory: { category: 'Items', fields: templateOption.fields }, footerCategory: { category: 'Footer', fields: templateOption.fields } }} inputValues={inputValues} />;
+const TemplateDisplay: React.FC<TemplateDisplayProps> = ({ template, data }) => {
+    // If no template is selected, return null
+    if (!template) return null;
+    console.log("templateDisplay", data, template)
+    // Render the appropriate template based on the selected option
+    const renderTemplate = () => {
+        switch (template.name) {
+            case 'Invoice Template':
+                return <PDFViewer width="100%" height="90%"><PDFInvoice data={data} template={template} /></PDFViewer>;
             default:
                 return null;
         }
     };
-    return (
-        <PDFViewer width="100%" height="90%">
-            {renderTemplate(config)}
-        </PDFViewer>
-    );
+
+    return renderTemplate();
 };
 
 export default TemplateDisplay;

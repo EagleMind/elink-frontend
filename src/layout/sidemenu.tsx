@@ -24,10 +24,10 @@ const SideMenu: React.FC<SideMenuProps> = ({ routes }) => {
     const location = useLocation();
 
     return (
-        <div className="  lg:block dark:bg-gray-800/40 w-1/6 border-r">
+        <div className="  lg:block  w-1/6 border-r bg-blue-400">
             <div className="flex flex-col gap-2">
                 <div className="flex h-[60px] items-center px-6 justify-center border-b ">
-                    <img src={logo} alt="Logo" width={150} className='p-5' />
+                    {/* <img src={logo} alt="Logo" width={150} className='p-5' /> */}
                 </div>
                 <div className="flex-1">
                     <nav className="grid items-start p-5 text-sm font-medium" >
@@ -38,12 +38,12 @@ const SideMenu: React.FC<SideMenuProps> = ({ routes }) => {
                                 to={route.path}
                                 className={`flex items-center rounded-lg px-3 py-2 text-[14px] my-1 ${location.pathname === route.path
                                     ? 'bg-gray-100 text-blue-500 hover:text-blue-500 dark:bg-gray-800 dark:text-white text-[14px]'
-                                    : 'text-blue-600 hover:text-white hover:bg-blue-500  transition ease-in dark:text-gray-400 dark:hover:text-white text-[14px]'
+                                    : 'text-white hover:text-white hover:bg-blue-500  transition ease-in dark:text-gray-400 dark:hover:text-white text-[14px]'
                                     }`}
                             >
                                 <div className="flex justify-between items-center space-x-3">
                                     {routeIcons[route.title]}
-                                    <span className="text-left">{route.title}</span>
+                                    <span >{route.title}</span>
                                 </div>
 
                             </Link>

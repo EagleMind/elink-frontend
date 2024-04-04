@@ -1,14 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import PDFInvoice from '../../components/InvoiceTemplator/pdfInvoiceTemplates/defaultInvoiceTemplate';
-import { PDFViewer } from '@react-pdf/renderer';
 import { InvoiceService } from '../../services/invoices';
-import moment from "moment"
 import { Link, useParams } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
-import DynaTemplate from '../../components/InvoiceTemplator/pdfInvoiceTemplates/dynaTemplate';
-import TemplateSelector, { TemplateOption } from '../../components/InvoiceTemplator/templateSelector';
+import { faCircleCheck, faFileInvoice, faXmark } from '@fortawesome/free-solid-svg-icons';
+import TemplateSelector, { TemplateOptionProps } from '../../components/InvoiceTemplator/templateSelector';
 import TemplateDisplay from '../../components/InvoiceTemplator/templateDisplay';
 
 interface Item {
@@ -25,92 +21,114 @@ export interface InvoiceDetailsState {
     invoice_name: string
     items: Item[]
 }
-
+interface FormState {
+    [categoryName: string]: {
+        fields: {
+            [fieldName: string]: string;
+        };
+    };
+}
 function CreateAndEditInvoice() {
-    let { invoiceId } = useParams();
+    const { invoiceId } = useParams();
     const [total, setTotal] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
     const [items, setItems] = useState<Item[]>([]);
-    const [errorDialog, setErrorDialog] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorDialog, setErrorDialog] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string>('');
     const [invoiceResponse, setInvoiceResponse] = useState<any>();
-    const [openFetchDialog, setOpenFetchDialog] = useState(false);
-    const [selectedTemplate, setSelectedTemplate] = useState<TemplateOption | null>(
-        null
-    );
+    const [openFetchDialog, setOpenFetchDialog] = useState<boolean>(false);
+    const [selectedTemplate, setSelectedTemplate] = useState<TemplateOptionProps | null>(null);
 
-    const handleSelectTemplate = (template: TemplateOption) => {
-        setSelectedTemplate(template);
-    };
+    // const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
+    const [newItemName, setNewItemName] = useState<string>('');
+    const [newItemPrice, setNewItemPrice] = useState<number>(0);
 
 
-    const [invoiceDetails, setInvoiceDetails] = useState<InvoiceDetailsState>({
-        vendor_name: "",
-        client_name: "",
-        delivery_date: "",
-        due_date: "",
-        invoice_number: "",
-        invoice_name: "",
-        items: items,
-        total: total
-    });
-    // State variables to hold input values
-    const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
+    const [formData, setFormData] = useState<FormState>({});
 
-    // Function to handle input changes
-    const handleInputChange = (fieldName: string, value: string) => {
-        setInputValues(prevState => ({
+
+    const handleInputChange = (categoryName: string, fieldName: string, value: string) => {
+        setFormData(prevState => ({
             ...prevState,
-            [fieldName]: value,
+            [categoryName]: {
+                ...prevState[categoryName],
+                fields: {
+                    ...prevState[categoryName]?.fields,
+                    [fieldName]: value
+                }
+            }
         }));
     };
-    const [newItemName, setNewItemName] = useState<string>();
-    const [newItemPrice, setNewItemPrice] = useState<number>();
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>, categoryName: string) => {
+        event.preventDefault();
+        console.log('Form submitted for category:', categoryName);
+        console.log('Form data:', formData[categoryName]);
+    };
+
+    const renderFormFields = (categoryName: string) => {
+
+        return (
+            <div>
+                <h2>{categoryName} Form</h2>
+                <form onSubmit={(e) => handleSubmit(e, categoryName)}>
+                    {selectedTemplate?.template.categories.map((category, index) => (
+                        category.name === categoryName &&
+                        <div key={index}>
+                            {category.fields.map((field, index) => (
+                                <div key={index}>
+                                    <label htmlFor={field}>{field}</label>
+                                    <input
+                                        type="text"
+                                        id={field}
+                                        value={formData[field]}
+                                        onChange={(e) => handleInputChange(categoryName, field, e.target.value)}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        );
+    };
 
 
+    const handleSelectTemplate = (template: TemplateOptionProps) => {
+        setSelectedTemplate(template);
+        console.log("selected", template)
+    };
     const handleAddItem = () => {
-
         if (newItemName && newItemPrice) {
             const newItem: Item = {
                 description: newItemName,
-                price: parseFloat(newItemPrice),
+                price: parseFloat(newItemPrice.toString())
             };
-
-            // Update the items state first
-            const updatedItems = [...items, newItem];
-            setItems(updatedItems);
-
-            // Then update the invoice details state
-            setInvoiceDetails(prevState => ({
-                ...prevState,
-                items: updatedItems
-            }));
+            setItems(prevItems => [...prevItems, newItem]);
             setNewItemName('');
             setNewItemPrice(0);
-            setTotal(newItemPrice)
+            setTotal(prevTotal => prevTotal + newItem.price);
         }
     };
 
     const handleRemoveItem = (indexToRemove: number) => {
         setItems(prevItems => {
-            // Create a copy of the items array
-            const updatedItems = [...prevItems];
-            // Remove the item at the specified index
-            updatedItems.splice(indexToRemove, 1);
-            setTotal(updatedItems.reduce((total: any, item: any) => total + item.price, 0).toFixed(3))
-            // Return the updated items array
+            const updatedItems = prevItems.filter((_, index) => index !== indexToRemove);
+            const newTotal = updatedItems.reduce((total, item) => total + item.price, 0);
+            setTotal(newTotal);
             return updatedItems;
         });
     };
+
     const handleSaveDraft = () => {
-        // Add your logic to save the current state as a draft
         console.log('Draft saved');
     };
+
 
     const handleCreateInvoice = async () => {
         setLoading(true)
         try {
-            await InvoiceService.create(invoiceDetails).then(res => {
+            await InvoiceService.create(formData).then(res => {
                 setInvoiceResponse(res)
                 setOpenFetchDialog(true);
             })
@@ -120,11 +138,9 @@ function CreateAndEditInvoice() {
             console.log(error.response.data)
 
             if (error.response && error.response.data.errors && error.response.data.errors.length > 0) {
-                // Extract error messages and set in state
                 const errorMessages = error.response.data.errors.map((err: any) => err.msg).join("\n");
                 setErrorMessage(errorMessages);
             } else {
-                // Set a generic error message if no specific error details are available
                 setErrorMessage("An error occurred while creating the invoice. Please try again later.");
             }
             setLoading(false)
@@ -133,13 +149,13 @@ function CreateAndEditInvoice() {
     };
     const getInvoiceDetails = async (invoiceId: string) => {
         const invoiceDetails = await InvoiceService.getById(invoiceId)
-        setInvoiceDetails(invoiceDetails)
+        setFormData(invoiceDetails)
     }
 
 
     useEffect(() => {
         let totalPrice = items.reduce((total: any, item: any) => total + item.price, 0).toFixed(3)
-        setInvoiceDetails(prevState => ({
+        setFormData(prevState => ({
             ...prevState,
             total: totalPrice
         }));
@@ -151,39 +167,26 @@ function CreateAndEditInvoice() {
 
 
     return (
-        <Fragment>
-            <TemplateSelector onSelectTemplate={handleSelectTemplate} />
-            <hr></hr>
-            <div className='flex'>
-                <div className="p-5 space-y-20 overflow-y-auto w-full scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-corner-rounded-full scrollbar scrollbar-thumb-slate-200 scrollbar-track-slate-300">
-                    {selectedTemplate && (
-                        <div>
-                            <h3 className="text-xl font-semibold mb-4">Enter Template Data</h3>
-                            {selectedTemplate.fields.map((field, index) => (
-                                <div key={index} className="flex flex-col">
-                                    <div className="font-bold">{field}</div>
-                                    <input
-                                        className="peer text-center w-full border-b-2 border-gray-300 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
-                                        type="text"
-                                        placeholder={field}
-                                        value={inputValues[field] || ''}
-                                        name={field}
-                                        onChange={(e) => handleInputChange(field, e.target.value)}
-                                    />
-                                </div>
-                            ))}
-                            <div className="flex justify-between p-5">
-                                <button disabled className="border-blue-300 disabled:cursor-not-allowed bg-transparent hover:bg-gray-100 transition  ease-in" onClick={handleSaveDraft}>
-                                    Enregistrer brouillant
-                                </button>
-                                <button className="border-blue-300 bg-transparent hover:bg-gray-100 transition  ease-in" onClick={handleCreateInvoice}>
-                                    Créer la facture
-                                </button>
-                            </div>
-                        </div>
-                    )}
+        <div className='bg-white rounded-lg '>
+            <div className='flex  md:h-[800px]'>
+                <div className=" p-5 space-y-20 overflow-y-auto w-full scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-corner-rounded-full scrollbar scrollbar-thumb-slate-200 scrollbar-track-slate-300">
+                    <TemplateSelector onSelectTemplate={handleSelectTemplate} />
+                    <div className='flex flex-col space-y-10 justify-center items-center m-5 w-full rounded-md'>
+                        <span className=' p-5 bg-blue-50 rounded-md text-blue-400'>Le design de cette partie est en cours</span>
+                    </div>
+                    {/* customize renderFormFields later */}
+                    {selectedTemplate?.template.categories.map(cat => { return renderFormFields(cat.name) })}
+                    <div className='flex justify-between p-5'>
+                        <button disabled className='border p-3 border-blue-300 disabled:cursor-not-allowed bg-transparent hover:bg-gray-100 transition  ease-in' onClick={handleSaveDraft}>Enregistrer brouillant</button>
+                        <button className='border p-3 border-blue-300 rounded-md bg-transparent hover:bg-blue-400 hover:text-white transition  ease-in' onClick={handleCreateInvoice}>Créer la facture</button>
+                    </div>
                 </div>
-                <TemplateDisplay config={selectedTemplate} inputValues={inputValues} onInputChange={handleInputChange} />
+                {selectedTemplate ? <TemplateDisplay template={selectedTemplate} data={formData} /> :
+                    <div className='flex flex-col space-y-10 border-2 border-blue-200 justify-center items-center m-5 w-full rounded-md'>
+                        <FontAwesomeIcon icon={faFileInvoice} size='9x' color='#60a4ff' />
+                        <span className=' p-5 bg-blue-50 rounded-md text-blue-400'>Votre facture sera visualisée ici lors de la sélection</span>
+                    </div>}
+
             </div>
             {/* Fetch Dialog */}
             <Transition.Root show={openFetchDialog} as={Fragment}>
@@ -212,7 +215,7 @@ function CreateAndEditInvoice() {
                                 leaveTo="opacity-0 scale-95"
                             >
                                 <Dialog.Panel className="w-1/2 transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                                    {loading || !invoiceDetails ? ( // Show pulse animation while loading
+                                    {loading || formData ? ( // Show pulse animation while loading
                                         <div className='flex justify-center items-center'>
                                             <div className="animate-pulse  text-gray-400 rounded-lg p-10 m-5">
                                                 <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -310,7 +313,7 @@ function CreateAndEditInvoice() {
                     </div>
                 </Dialog>
             </Transition.Root>
-        </Fragment>
+        </div>
     )
 }
 

@@ -55,7 +55,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({ id, name, value, checked, onC
     return (
         <label
             htmlFor={id}
-            className={`flex shadow-md rounded-lg p-2 cursor-pointer hover:border-2 hover:border-blue-400 w-1/4 ease-in  ${checked ? 'border-2 border-blue-400' : 'border-gray-300'}`}
+            className={`flex shadow-md rounded-lg p-2 cursor-pointer hover:border-2 hover:border-blue-400 w-1/4 transition ease-in  ${checked ? 'border-2 border-blue-400' : 'border-gray-300'}`}
         >
             <input
                 type='radio'

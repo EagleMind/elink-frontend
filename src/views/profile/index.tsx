@@ -9,13 +9,13 @@ const TabComponent: React.FC<TabComponentProps> = ({ tabs }) => {
 
   return (
     <div className=" w-full mt-8">
-      <div className="flex mb-4">
+      <div className="flex ">
         {tabs.map((tab, index) => (
           <button
             key={index}
             className={`${activeTab === index
               ? 'bg-blue-500 text-white'
-              : 'bg-gray-200 text-gray-700'
+              : ' hover:bg-white hover:text-blue-600 text-gray-700 transition ease-in'
               } px-4 py-2 mr-2 rounded-t-lg focus:outline-none text-sm`}
             onClick={() => setActiveTab(index)}
           >
@@ -140,7 +140,7 @@ const ProfilePage: React.FC = () => {
     {
       name: "Information de profile", content: (
         <Fragment>
-          <div className="space-y-4 flex justify-start space-x-44">
+          <div className="space-y-4 flex justify-start space-x-44 ">
             <div className='flex flex-col w-1/3'>
               <div className="flex flex-col space-y-4 my-3 text-sm">
                 <label className="font-medium text-left">Nom </label>
@@ -247,7 +247,7 @@ const ProfilePage: React.FC = () => {
             </div>
           </div>
           <div className='flex justify-start'>
-            <button onClick={handleUpdateProfile} className="px-4  bg-blue-500 text-white rounded hover:bg-blue-600  text-sm">Mettre à jour</button>
+            <button onClick={handleUpdateProfile} className="px-4  bg-blue-500 text-white rounded h-[40px] hover:bg-blue-600  text-sm">Mettre à jour</button>
 
           </div>
         </Fragment>
@@ -255,7 +255,7 @@ const ProfilePage: React.FC = () => {
     },
     {
       name: "Securité du compte", content: (
-        <div className='flex flex-col w-1/3'>
+        <div className='flex flex-col w-1/3 '>
           <div className="flex flex-col space-y-4 my-3 text-sm">
             <p className="font-medium text-left  text-sm">Mot de passe :</p>
             <input
@@ -274,14 +274,14 @@ const ProfilePage: React.FC = () => {
               className="border border-gray-300 rounded px-3 py-2 w-full"
             />
           </div>
-          <button onClick={handleUpdateSecurity} className="px-4  bg-blue-500 text-white rounded hover:bg-blue-600  w-1/4 text-sm">Mettre à jour</button>
+          <button onClick={handleUpdateSecurity} className="px-4  bg-blue-500 text-white rounded hover:bg-blue-600 h-[40px] w-1/4 text-sm">Mettre à jour</button>
 
         </div>
       )
     }
   ]
   return (
-    <div className="flex flex-col p-4">
+    <div className="flex flex-col ">
       <TabComponent tabs={tabs} />
       {/* Display error messages */}
       <div className="text-red-500 mt-2">

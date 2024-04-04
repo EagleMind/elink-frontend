@@ -40,7 +40,7 @@ const Dashboard: React.FC = () => {
     ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
     return (
-        data && <div className="flex flex-col h-screen">
+        data && <div className="flex flex-col  bg-white rounded-md">
             <main className="flex-1  p-6 ">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <DashboardCard title="Total Invoices" value={data.totalInvoices} />
@@ -49,10 +49,11 @@ const Dashboard: React.FC = () => {
                     <DashboardCard title="Average Items Per Invoice" value={data.averageItemsPerInvoice} />
                     <DashboardCard title="Total Revenue" value={data.totalRevenue} />
                     <StatusDistribution title="Status Distribution" distribution={data.statusDistribution} />
-                    {dataset && <Line data={dataset} options={{
+                    {dataset && <Line width={"100%"} height={"30%"} data={dataset} options={{
                         responsive: true,
-
+                        maintainAspectRatio: true
                     }} />}
+
                 </div>
             </main>
 
@@ -67,7 +68,7 @@ interface DashboardCardProps {
 
 const DashboardCard: React.FC<DashboardCardProps> = ({ title, value }) => {
     return (
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
+        <div className="bg-white rounded-lg border shadow-md p-6">
             <h2 className="text-md font-semibold">{title}</h2>
             <p className="text-xl mt-2">{value}</p>
         </div>

@@ -24,14 +24,17 @@ export default function ViewInvoicesContainer({ }) {
     const renderComponent = () => {
         if (location.pathname === '/viewInvoices') {
             return <div className='flex flex-col'>
-                <div className='flex p-5 justify-between'>
+                <div className='flex py-5 justify-between'>
                     <input
                         type="text"
-                        className="p-16 bg-white focus:outline-none focus:shadow-outline border border-blue-300 rounded-md py-2 px-2 block appearance-none leading-normal"
+                        className=" bg-white focus:outline-none focus:shadow-outline border border-blue-300 rounded-md py-2 px-2 block appearance-none leading-normal"
                         placeholder="Chercher par attribue"
                         value={searchTerm}
                         onChange={handleSearch} />
-                    <Link to={"/createInvoice"} className="bg-blue-100 p-3 hover:text-white hover:bg-blue-400 text-blue-600 w-auto transition ease-in  rounded-md">Créer une facture</Link>
+                    <button className='bg-blue-200 p-3 hover:text-white hover:bg-blue-600 text-blue-800 w-auto h-auto transition ease-in  rounded-md'>
+                        <Link to={"/createInvoice"} className="">Créer une facture</Link>
+
+                    </button>
 
                 </div>
                 <hr></hr>
@@ -39,15 +42,15 @@ export default function ViewInvoicesContainer({ }) {
             </div>
         } else {
             return (
-                <Fragment>
+                <div className='flex'>
                     <CreateAndEditInvoice ></CreateAndEditInvoice>
-                </Fragment>
+                </div>
             );
         }
     };
     return (
-        <Fragment>
+        <div className='bg-white p-3 rounded-md'>
             {renderComponent()}
-        </Fragment>
+        </div>
     )
 }

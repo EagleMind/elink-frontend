@@ -21,7 +21,7 @@ export default function PaymentLinksContainer() {
     const renderComponent = () => {
         if (location.pathname === '/paymentLinks') {
             return <div className='flex flex-col'>
-                <div className='flex p-5 justify-between'>
+                <div className='flex p-3 my-3'>
                     <input
                         type="text"
                         className="p-16 bg-white focus:outline-none focus:shadow-outline border border-blue-300 rounded-md py-2 px-2 block appearance-none leading-normal"
@@ -45,9 +45,8 @@ export default function PaymentLinksContainer() {
     };
 
     return (
-        <Fragment>
-
+        <div className='bg-white p-3 rounded-md'>
             {renderComponent()}
-        </Fragment>
+        </div>
     );
 }
