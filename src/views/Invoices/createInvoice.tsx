@@ -3,13 +3,21 @@ import { InvoiceService } from '../../services/invoices';
 import { Link, useParams } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleCheck, faFileInvoice, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCircleCheck, faCirclePlus, faFileInvoice, faTrashCan, faXmark } from '@fortawesome/free-solid-svg-icons';
 import TemplateSelector, { TemplateOptionProps } from '../../components/InvoiceTemplator/templateSelector';
 import TemplateDisplay from '../../components/InvoiceTemplator/templateDisplay';
 
 interface Item {
     description: string;
     price: number;
+    qty: number
+}
+interface FormState {
+    [categoryName: string]: {
+        fields: {
+            [fieldName: string]: string;
+        };
+    };
 }
 export interface InvoiceDetailsState {
     vendor_name: string;
@@ -21,18 +29,26 @@ export interface InvoiceDetailsState {
     invoice_name: string
     items: Item[]
 }
-interface FormState {
-    [categoryName: string]: {
-        fields: {
-            [fieldName: string]: string;
-        };
-    };
+
+// render form
+interface Template {
+    categories: Category[];
 }
+
+interface Category {
+    name: string;
+    fields: string[];
+}
+
+interface InvoiceTemplate {
+    name: string;
+    description: string;
+    template: Template;
+}
+//
 function CreateAndEditInvoice() {
     const { invoiceId } = useParams();
-    const [total, setTotal] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
-    const [items, setItems] = useState<Item[]>([]);
     const [errorDialog, setErrorDialog] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [invoiceResponse, setInvoiceResponse] = useState<any>();
@@ -42,11 +58,20 @@ function CreateAndEditInvoice() {
     // const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
     const [newItemName, setNewItemName] = useState<string>('');
     const [newItemPrice, setNewItemPrice] = useState<number>(0);
+    const [newItemQty, setNewItemQty] = useState<number>(0);
+    const [total, setTotal] = useState<number>(0);
 
+    const [items, setItems] = useState<Item[]>([]);
 
     const [formData, setFormData] = useState<FormState>({});
 
 
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>, categoryName: string) => {
+        event.preventDefault();
+        console.log('Form submitted for category:', categoryName);
+        console.log('Form data:', formData[categoryName]);
+    };
     const handleInputChange = (categoryName: string, fieldName: string, value: string) => {
         setFormData(prevState => ({
             ...prevState,
@@ -59,39 +84,169 @@ function CreateAndEditInvoice() {
             }
         }));
     };
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>, categoryName: string) => {
-        event.preventDefault();
-        console.log('Form submitted for category:', categoryName);
-        console.log('Form data:', formData[categoryName]);
-    };
-
-    const renderFormFields = (categoryName: string) => {
-
-        return (
-            <div>
-                <h2>{categoryName} Form</h2>
-                <form onSubmit={(e) => handleSubmit(e, categoryName)}>
-                    {selectedTemplate?.template.categories.map((category, index) => (
-                        category.name === categoryName &&
-                        <div key={index}>
-                            {category.fields.map((field, index) => (
-                                <div key={index}>
-                                    <label htmlFor={field}>{field}</label>
+    const getFieldComponent = (categoryName: string) => {
+        if (categoryName === 'Items') {
+            return (
+                <table className="w-full border-collapse ">
+                    <thead>
+                        <tr>
+                            <th className="text-left py-2 px-5">Article</th>
+                            <th className="text-right py-2 px-5">Somme</th>
+                            <th className="text-right py-2 px-5">Quantity</th>
+                            <th className="text-right py-2 px-5">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {items.map((item, index) => (
+                            <tr key={index}>
+                                <td className="border-t py-2 px-5 text-left">{item.description}</td>
+                                <td className="border-t py-2 px-5 text-right">${item.price.toFixed(3)}</td>
+                                <td className="border-t py-2 px-5 text-center">{item.qty}</td>
+                                <td className="border-t py-2 px-5 text-right">
+                                    <button className="border-blue-300 bg-transparent hover:bg-gray-100 transition ease-in p-1" onClick={() => handleRemoveItem(index)}>
+                                        <FontAwesomeIcon size='xl' color='red' icon={faTrashCan} />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                        {invoiceId && formData.items.map((item, index) => (
+                            <tr key={index}>
+                                <td className="border-t py-2 px-5 text-left">{item.description}</td>
+                                <td className="border-t py-2 px-5 text-right">${item.price.toFixed(3)}</td>
+                                <td className="border-t py-2 px-5 text-right">{item.qty}</td>
+                                <td className="border-t py-2 px-5 text-right">
+                                    <button className="border-blue-300 bg-transparent hover:bg-gray-100 transition ease-in p-1" onClick={() => handleRemoveItem(index)}>
+                                        <FontAwesomeIcon size='xl' color='red' icon={faTrashCan} />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                        <tr>
+                            <td className="border-t py-2 px-5 text-left" colSpan={4}>
+                                <div className="flex ">
                                     <input
                                         type="text"
-                                        id={field}
-                                        value={formData[field]}
-                                        onChange={(e) => handleInputChange(categoryName, field, e.target.value)}
+                                        placeholder="Item name"
+                                        value={newItemName}
+                                        name="description"
+                                        onChange={(e) => setNewItemName(e.target.value)}
+                                        className="mr-2 p-1 border rounded"
                                     />
+                                    <input
+                                        name="price"
+                                        type="number"
+                                        placeholder="Item price"
+                                        value={newItemPrice}
+                                        onChange={(e) => setNewItemPrice(e.target.value)}
+                                        className="mr-2 p-1 border rounded"
+                                    />
+                                    <input
+                                        name="qty"
+                                        type="number"
+                                        placeholder="Item Quantity"
+                                        value={newItemQty}
+                                        onChange={(e) => setNewItemQty(e.target.value)}
+                                        className="mr-2 p-1 border rounded"
+                                    />
+                                    <button className="border-blue-300 bg-transparent hover:bg-gray-100 transition ease-in p-1" onClick={handleAddItem}>
+                                        <FontAwesomeIcon size='xl' color="blue" icon={faCirclePlus} />
+                                    </button>
                                 </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td className="border-t font-bold py-2 px-5 text-left">Total (excl. charges):</td>
+                            <td className="border-t font-bold py-2 px-5 text-right" colSpan={3}>{formData.total}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+            );
+        }
+
+        return null;
+    };
+    const formatFieldName = (fieldName: string) => {
+        // Convert camelCase to normal text (e.g., businessName -> Business Name)
+        return fieldName.replace(/([A-Z])/g, ' $1')
+            .replace(/^./, str => str.toUpperCase());
+    };
+    const renderFormFields = (categoryName: string) => (
+        <form onSubmit={(e) => handleSubmit(e, categoryName)} className="w-full flex justify-center items-center">
+            {selectedTemplate?.template.categories.map((category, index) => (
+                category.name !== 'Items' && (  // Exclude category with name 'Items'
+                    category.name === categoryName && (
+                        <div key={index} className="mb-4 w-full">
+                            <div className='bg-gray-100  border-gray-200 flex items-center justify-center'>
+                                <h3 className="font-bold text-lg my-3  text-gray-700">{category.name}</h3>
+                            </div>
+
+
+                            {category.fields.map((field, fieldIndex) => (
+                                fieldIndex % 3 === 0 && (
+                                    <div key={fieldIndex} className="flex flex-wrap mb-4  p-5">
+                                        <div className="w-full md:w-1/3 px-2 mb-4 md:mb-0">
+                                            <label htmlFor={field} className="block text-gray-700">{formatFieldName(field)}</label>
+                                            <input
+                                                type={
+                                                    field.toLowerCase().includes('date') ? 'date' :
+                                                        field.includes('@') ? 'email' :
+                                                            'text'
+                                                }
+                                                id={field}
+                                                value={formData[categoryName]?.fields[field] || ''}
+                                                onChange={(e) => handleInputChange(categoryName, field, e.target.value)}
+                                                className="w-full mt-1 p-2 border rounded-md"
+                                            />
+                                        </div>
+                                        {category.fields[fieldIndex + 1] && (
+                                            <div className="w-full md:w-1/3 px-2 mb-4 md:mb-0">
+                                                <label htmlFor={category.fields[fieldIndex + 1]} className="block text-gray-700">{formatFieldName(category.fields[fieldIndex + 1])}</label>
+                                                <input
+                                                    type={
+                                                        category.fields[fieldIndex + 1].toLowerCase().includes('date') ? 'date' :
+                                                            category.fields[fieldIndex + 1].includes('@') ? 'email' :
+                                                                'text'
+                                                    }
+                                                    id={category.fields[fieldIndex + 1]}
+                                                    value={formData[categoryName]?.fields[category.fields[fieldIndex + 1]] || ''}
+                                                    onChange={(e) => handleInputChange(categoryName, category.fields[fieldIndex + 1], e.target.value)}
+                                                    className="w-full mt-1 p-2 border rounded-md"
+                                                />
+                                            </div>
+                                        )}
+                                        {category.fields[fieldIndex + 2] && (
+                                            <div className="w-full md:w-1/3 px-2">
+                                                <label htmlFor={category.fields[fieldIndex + 2]} className="block text-gray-700">{formatFieldName(category.fields[fieldIndex + 2])}</label>
+                                                <input
+                                                    type={
+                                                        category.fields[fieldIndex + 2].toLowerCase().includes('date') ? 'date' :
+                                                            category.fields[fieldIndex + 2].includes('@') ? 'email' :
+                                                                'text'
+                                                    }
+                                                    id={category.fields[fieldIndex + 2]}
+                                                    value={formData[categoryName]?.fields[category.fields[fieldIndex + 2]] || ''}
+                                                    onChange={(e) => handleInputChange(categoryName, category.fields[fieldIndex + 2], e.target.value)}
+                                                    className="w-full mt-1 p-2 border rounded-md"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                )
                             ))}
                         </div>
-                    ))}
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
-        );
-    };
+                    )
+                )
+            ))}
+        </form>
+    );
+
+
+
+
+
 
 
     const handleSelectTemplate = (template: TemplateOptionProps) => {
@@ -99,14 +254,16 @@ function CreateAndEditInvoice() {
         console.log("selected", template)
     };
     const handleAddItem = () => {
-        if (newItemName && newItemPrice) {
+        if (newItemName && newItemPrice && newItemQty) {
             const newItem: Item = {
                 description: newItemName,
-                price: parseFloat(newItemPrice.toString())
+                price: parseFloat(newItemPrice.toString()),
+                qty: newItemQty
             };
             setItems(prevItems => [...prevItems, newItem]);
             setNewItemName('');
             setNewItemPrice(0);
+            setNewItemQty(0);
             setTotal(prevTotal => prevTotal + newItem.price);
         }
     };
@@ -120,19 +277,16 @@ function CreateAndEditInvoice() {
         });
     };
 
-    const handleSaveDraft = () => {
-        console.log('Draft saved');
-    };
-
-
     const handleCreateInvoice = async () => {
         setLoading(true)
+        console.log("create", { data: { formData }, items: { items } })
         try {
-            await InvoiceService.create(formData).then(res => {
+            await InvoiceService.create({ data: { formData }, items: { items } }).then(res => {
                 setInvoiceResponse(res)
                 setOpenFetchDialog(true);
+                setLoading(false)
+
             })
-            setLoading(false)
         } catch (error: any) {
             setErrorDialog(true)
             console.log(error.response.data)
@@ -147,6 +301,11 @@ function CreateAndEditInvoice() {
 
         }
     };
+    const handleSaveDraft = () => {
+        console.log('Draft saved');
+    };
+
+
     const getInvoiceDetails = async (invoiceId: string) => {
         const invoiceDetails = await InvoiceService.getById(invoiceId)
         setFormData(invoiceDetails)
@@ -154,7 +313,7 @@ function CreateAndEditInvoice() {
 
 
     useEffect(() => {
-        let totalPrice = items.reduce((total: any, item: any) => total + item.price, 0).toFixed(3)
+        let totalPrice = items.reduce((total: any, item: any) => total + (item.price * item.qty), 0).toFixed(3)
         setFormData(prevState => ({
             ...prevState,
             total: totalPrice
@@ -162,6 +321,7 @@ function CreateAndEditInvoice() {
         if (invoiceId) {
             getInvoiceDetails(invoiceId)
         }
+        console.log("formData", formData)
 
     }, [total, items]);
 
@@ -169,19 +329,21 @@ function CreateAndEditInvoice() {
     return (
         <div className='bg-white rounded-lg '>
             <div className='flex  md:h-[800px]'>
-                <div className=" p-5 space-y-20 overflow-y-auto w-full scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-corner-rounded-full scrollbar scrollbar-thumb-slate-200 scrollbar-track-slate-300">
+                <div className="  space-y-10 overflow-y-auto  w-full scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-corner-rounded-full scrollbar scrollbar-thumb-slate-200 scrollbar-track-slate-300">
                     <TemplateSelector onSelectTemplate={handleSelectTemplate} />
-                    <div className='flex flex-col space-y-10 justify-center items-center m-5 w-full rounded-md'>
-                        <span className=' p-5 bg-blue-50 rounded-md text-blue-400'>Le design de cette partie est en cours</span>
-                    </div>
+
+                    {getFieldComponent(selectedTemplate?.template.categories[2].name)}
                     {/* customize renderFormFields later */}
-                    {selectedTemplate?.template.categories.map(cat => { return renderFormFields(cat.name) })}
+                    <div className='flex flex-col w-full'>
+                        {selectedTemplate?.template.categories.map(cat => { return renderFormFields(cat.name) })}
+
+                    </div>
                     <div className='flex justify-between p-5'>
                         <button disabled className='border p-3 border-blue-300 disabled:cursor-not-allowed bg-transparent hover:bg-gray-100 transition  ease-in' onClick={handleSaveDraft}>Enregistrer brouillant</button>
                         <button className='border p-3 border-blue-300 rounded-md bg-transparent hover:bg-blue-400 hover:text-white transition  ease-in' onClick={handleCreateInvoice}>Créer la facture</button>
                     </div>
                 </div>
-                {selectedTemplate ? <TemplateDisplay template={selectedTemplate} data={formData} /> :
+                {selectedTemplate ? <TemplateDisplay template={selectedTemplate} items={items} formData={formData} total={total} /> :
                     <div className='flex flex-col space-y-10 border-2 border-blue-200 justify-center items-center m-5 w-full rounded-md'>
                         <FontAwesomeIcon icon={faFileInvoice} size='9x' color='#60a4ff' />
                         <span className=' p-5 bg-blue-50 rounded-md text-blue-400'>Votre facture sera visualisée ici lors de la sélection</span>

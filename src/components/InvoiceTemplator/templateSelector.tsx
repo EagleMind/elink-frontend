@@ -23,35 +23,39 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelectTemplate })
             description: 'An invoice template',
             template: {
                 categories: [
-                    {
+                    { // Header Section
                         name: "Header",
-                        fields: ["Invoice Number", "Date", "Due Date", "Customer ID"]
+                        fields: ["businessName", "clientName", "invoiceNumber", "Date", "dueDate"],
                     },
-                    {
+                    { // Billing Information Section
                         name: "Billing Information",
-                        fields: ["Customer Name", "Address", "City", "State", "Postal Code", "Country", "Email", "Phone"]
+                        fields: ["customerName", "Address", "City", "State", "postalCode", "Country", "Email", "Phone"],
                     },
-                    {
+                    { // Items Section (repeatable for each item)
                         name: "Items",
-                        fields: ["Item", "Description", "Quantity", "Unit Price", "Total Price"]
+                        fields: [
+                            "Description",
+                            "Quantity",
+                            "unitPrice",
+                        ],
                     },
-                    {
-                        name: "Footer",
-                        fields: ["Subtotal", "Tax", "Discount", "Total Amount", "Notes"]
-                    }
-                ]
-            }
-
-
+                    // { // Footer Section
+                    // name: "Footer",
+                    // fields: ["Subtotal", "Tax", "Discount (Optional)", "Total Amount", "Notes (Optional)"],
+                    // },
+                ],
+            },
         }
     ];
+
     const handleTemplateSelect = (template: TemplateOptionProps) => {
         setSelectedTemplate(template);
         onSelectTemplate(template);
+        console.log("selectedTemplate", selectedTemplate)
     };
 
     return (
-        <div className="rounded-md scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-corner-rounded-full scrollbar scrollbar-thumb-slate-200 scrollbar-track-slate-300">
+        <div className="rounded-md scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-corner-rounded-full scrollbar scrollbar-thumb-slate-200 scrollbar-track-slate-300  p-5">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {templateOptions.map((template, index) => (
                     <div key={index} className="shadow-md border-gray-200 rounded-md p-4 cursor-pointer hover:border-blue-500 hover:bg-blue-200 hover:text- transition duration-300" onClick={() => handleTemplateSelect(template)}>

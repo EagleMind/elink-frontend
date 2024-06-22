@@ -1,23 +1,49 @@
-import React from 'react';
 import { PDFViewer } from '@react-pdf/renderer';
-import MyPDF from '../../views/Invoices/pdfInvoiceTemplates/dynaTemplate';
-import { TemplateOptionProps } from './templateSelector';
+import React from 'react';
 import PDFInvoice from '../../views/Invoices/pdfInvoiceTemplates/dynaTemplate';
+
+interface TemplateOptionProps {
+    name: string;
+}
+
+interface Item {
+    description: string;
+    price: number;
+    qty: number;
+}
+
+interface FormState {
+    [categoryName: string]: {
+        fields: {
+            [fieldName: string]: string;
+        };
+    };
+}
 
 interface TemplateDisplayProps {
     template: TemplateOptionProps | null;
-    data: any;
+    items: Item[];
+    formData: FormState;
+    total: number;
 }
 
-const TemplateDisplay: React.FC<TemplateDisplayProps> = ({ template, data }) => {
-    // If no template is selected, return null
+const TemplateDisplay: React.FC<TemplateDisplayProps> = ({ template, items, formData, total }) => {
+    console.log("template?", template, items, formData, total)
     if (!template) return null;
-    console.log("templateDisplay", data, template)
-    // Render the appropriate template based on the selected option
+
+    const data = {
+        items,
+        formData,
+    };
+
     const renderTemplate = () => {
         switch (template.name) {
             case 'Invoice Template':
-                return <PDFViewer width="100%" height="90%"><PDFInvoice data={data} template={template} /></PDFViewer>;
+                return (
+                    <PDFViewer width="100%" height="90%">
+                        <PDFInvoice template={template} data={data} />
+                    </PDFViewer>
+                );
             default:
                 return null;
         }
